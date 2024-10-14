@@ -10,7 +10,7 @@ import {
 import Image from "react-bootstrap/Image";
 import { MdLogout } from "react-icons/md";
 
-function BasicExample() {
+function AdminNavigation() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleMouseEnter = () => {
@@ -46,8 +46,8 @@ function BasicExample() {
                 key={direction}
                 id={`dropdown-button-drop-${direction}`}
                 drop={direction}
-                show={showDropdown} 
-                onClick={handleToggleDropdown} 
+                show={showDropdown}
+                onClick={handleToggleDropdown}
                 title={
                   <span>
                     <Image src="holder.js/171x180" alt="user" roundedCircle />
@@ -76,4 +76,4 @@ function BasicExample() {
   );
 }
 
-export default BasicExample;
+export default AdminNavigation;

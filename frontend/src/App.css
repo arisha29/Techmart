@@ -13,7 +13,11 @@ body {
   height: 100%;
 }
 
-#text-color {
+/* navigation bar */
+
+#site-name,
+#productsDropdown,
+#sign-in {
   color: #29456B;
 }
 
@@ -28,3 +32,37 @@ body {
   color: #fff;
   transition: all 0.3s ease-in-out;
 }
+
+#user-profile-btn {
+  background-color: transparent;
+  border: 2px solid #29456B;
+  color: #29456B;
+  padding: 0.3rem 1rem;
+}
+
+#user-dropdown {
+  min-width: 205px;
+}
+
+.dropdown-menu {
+  min-width: 200px;
+}
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu-right {
+  top: 0;
+  left: 103%;
+  margin-left: 0.1rem;
+  position: absolute;
+  min-width: 200px;
+}
+
+#search-bar {
+  margin: 0 auto;
+  width: 60%;
+}
+
+/* End Navigation Bar */
