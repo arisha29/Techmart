@@ -1,16 +1,11 @@
-import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-
-import Navbar from "./assets/components/frontend/Navigationbar";
-// import Nav from "./assets/components/admin/AdminNavigation";
-import SignupForm from "./assets/components/Auth/SignupForm";
+import WebHome from "./assets/components/frontend/WebHome";
+// import Home from "./assets/components/admin/Home";
 
 const App = () => {
   return (
     <>
-      <Navbar />
-      {/* <Nav /> */}
-      <SignupForm/>
+      <WebHome />
+      {/* <Home/> */}
     </>
   );
 };
