@@ -19,6 +19,10 @@ header{
   background-color: #29456B;
 }
 
+a{
+  text-decoration: none;
+}
+
 /* navigation bar */
 
 .nav{
@@ -31,13 +35,13 @@ header{
   color: #29456B;
 }
 
-#add-product-btn {
+#custom-btn {
   background-color: transparent;
   border: 2px solid #29456B;
   color: #29456B;
 }
 
-#add-product-btn:hover {
+#custom-btn:hover {
   background-color: #29456B;
   color: #fff;
   transition: all 0.3s ease-in-out;
@@ -62,8 +66,20 @@ header{
 #search-bar {
   margin-right: auto;
   width: 65%;
+  background-color: #f0f0f0;
 }
 
 /* End Navigation Bar */
 
 /* Sign In Form */
+
+.login-form{
+  width: 35rem;
+  background-color: #fff;
+  margin: 0 auto;
+}
+
+#sign-in-btn{
+  background-color: #29456B;
+  border: none;
+}
