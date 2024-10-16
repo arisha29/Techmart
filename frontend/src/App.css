@@ -1,3 +1,5 @@
+/* global styles */
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 * {
@@ -15,24 +17,8 @@ body {
   background-color: #ada2a2;
 }
 
-header{
-  background-color: #29456B;
-}
-
-a{
+a {
   text-decoration: none;
-}
-
-/* navigation bar */
-
-.nav{
-  background-color: #fff;
-}
-
-#site-name,
-#productsDropdown,
-#sign-in {
-  color: #29456B;
 }
 
 #custom-btn {
@@ -47,39 +33,15 @@ a{
   transition: all 0.3s ease-in-out;
 }
 
-.dropdown-menu {
-  min-width: 200px;
-}
-
-.dropdown-submenu {
-  position: relative;
-}
-
-.dropdown-submenu-right {
-  top: 0;
-  left: 103%;
-  margin-left: 0.1rem;
-  position: absolute;
-  min-width: 200px;
-}
-
-#search-bar {
-  margin-right: auto;
-  width: 65%;
-  background-color: #f0f0f0;
-}
-
-/* End Navigation Bar */
-
 /* Sign In Form */
 
-.login-form{
+.login-form {
   width: 35rem;
   background-color: #fff;
   margin: 0 auto;
 }
 
-#custom-bg-btn{
+#custom-bg-btn {
   background-color: #29456B;
   border: none;
 }

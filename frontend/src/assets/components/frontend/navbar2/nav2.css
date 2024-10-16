@@ -1,0 +1,147 @@
+.nav2 {
+    width: 100%;
+    background-color: grey;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+#productsDropdown2 {
+    color: #29456B;
+}
+
+#accessories {
+    color: #29456B;
+
+}
+
+.dropdown-menu {
+    min-width: 200px;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu-right {
+    top: 0;
+    left: 102%;
+    margin-left: 0.1rem;
+    position: absolute;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    font-size: 1rem;
+    color: #29456B !important;
+}
+
+#search-bar {
+    background-color: #f0f0f0;
+}
+
+/* Responsive for small devices */
+@media screen and (max-width: 575px) {
+    .nav2 {
+        flex-direction: column-reverse;
+    }
+
+    #productsDropdown2 {
+        display: none;
+    }
+
+    .search-input-container {
+        width: 100%;
+        margin-top: 0.8rem;
+    }
+
+    .icons-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .search-input {
+        display: none;
+        width: 100%;
+    }
+
+    .search-input.show {
+        display: block;
+    }
+}
+
+/* Responsive for medium devices */
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+    .nav2 {
+        flex-direction: column-reverse;
+    }
+
+    #productsDropdown2 {
+        display: none;
+    }
+
+    .search-input-container {
+        width: 100%;
+        margin-top: 0.8rem;
+    }
+
+    .search-input {
+        display: none;
+        width: 100%;
+    }
+
+    .search-input.show {
+        display: block;
+    }
+
+    .search-icon-container {
+        display: block;
+    }
+
+    .icons-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+/* Responsive for medium & large devices */
+
+@media (min-width:769px) and (max-width:992px) {
+    #productsDropdown2 {
+        display: none;
+    }
+
+    .search-input-container {
+        display: block;
+        width: 70%;
+    }
+
+    .search-icon-container {
+        display: none;
+    }
+
+    .icons-container {
+        display: flex;
+        align-items: center;
+    }
+}
+
+@media (min-width: 992px) and (max-width:2560px) {
+    #productsDropdown2 {
+        display: block;
+    }
+
+    .search-input-container {
+        width: 65%;
+    }
+
+    .search-icon-container {
+        display: none;
+    }
+}
