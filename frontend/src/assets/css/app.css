@@ -1771,16 +1771,8 @@ a {
 	box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075)!important
 }
 
-.bg-login {
-	background-image: url(../images/login-images/bg-login-img.jpg);
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-attachment: fixed
-}
-
-.bg-forgot {
-	background-image: url(../images/login-images/bg-forgot-password.jpg);
+.bg-forgot,.bg-login {
+	background-image: url(../Images/bg-img.jpg);
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;

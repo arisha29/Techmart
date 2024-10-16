@@ -52,7 +52,7 @@ const Navigationbar = () => {
             <Nav.Link href="#link">
               <Button
                 className="d-flex align-items-center gap-2 fw-medium"
-                id="add-product-btn"
+                id="custom-btn"
               >
                 <MdOutlineAddCircle fontSize={25} />
                 Add Product
@@ -64,7 +64,7 @@ const Navigationbar = () => {
 
       {/* Search & icons */}
 
-      <Navbar expand="lg" className="bg-body-tertiary">
+      <Navbar expand="lg" className="nav">
         <Container>
           <div
             className="dropdown mx-3"
