@@ -33,14 +33,6 @@ a {
   transition: all 0.3s ease-in-out;
 }
 
-/* Sign In Form */
-
-.login-form {
-  width: 35rem;
-  background-color: #fff;
-  margin: 0 auto;
-}
-
 #custom-bg-btn {
   background-color: #29456B;
   border: none;

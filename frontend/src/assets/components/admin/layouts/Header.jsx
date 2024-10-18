@@ -1,14 +1,38 @@
 import { LuBell } from "react-icons/lu";
 import { IoSearchOutline } from "react-icons/io5";
+import { useState } from "react";
+import {
+  MdOutlineDashboard,
+  MdOutlineMonetizationOn,
+  MdOutlineClose,
+} from "react-icons/md";
+import { CiLogout, CiMenuFries } from "react-icons/ci";
+import SideBar from "./SideBar";
 
 const Header = () => {
+  const [menuOpen, SetMenuOpen] = useState(false);
+  const [showDropdown, SetShowDropdown] = useState(false);
+
+  // Toggle for menu
+  const handleMenuToggle = () => SetMenuOpen(!menuOpen);
+
+  // handlers fro dropdown
+  const handleMouseEnter = () => SetShowDropdown(true);
+  const handleMouseLeave = () => SetShowDropdown(false);
+  const handleToggleDropdown = () => SetShowDropdown(!showDropdown);
+
   return (
     <header>
       <div className="topbar d-flex align-items-center">
         <nav className="navbar navbar-expand">
           <div className="mobile-toggle-menu">
-            <i className="bx bx-menu"></i>
+            <CiMenuFries
+              color="#29456B"
+              fontSize={25}
+              onClick={handleMenuToggle}
+            />
           </div>
+          {menuOpen && <SideBar />}
           <div className="search-bar flex-grow-1">
             <div className="position-relative search-bar-box">
               <input
@@ -17,10 +41,10 @@ const Header = () => {
                 placeholder="Type to search..."
               />
               <span className="position-absolute top-50 search-show translate-middle-y">
-                <IoSearchOutline color="#29456B" />
+                <IoSearchOutline color="#29456B" fontSize={25} />
               </span>
               <span className="position-absolute top-50 search-close translate-middle-y">
-                <i className="bx bx-x"></i>
+                <MdOutlineClose color="#29456B" fontSize={25} />
               </span>
             </div>
           </div>
@@ -28,8 +52,7 @@ const Header = () => {
             <ul className="navbar-nav align-items-center">
               <li className="nav-item mobile-search-icon">
                 <a className="nav-link" href="#">
-                  {" "}
-                  <i className="bx bx-search"></i>
+                  <IoSearchOutline color="#29456B" fontSize={25} />
                 </a>
               </li>
               <li className="nav-item dropdown dropdown-large">
@@ -221,16 +244,19 @@ const Header = () => {
               </li>
             </ul>
           </div>
-          <div className="user-box dropdown">
-            <a
-              className="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret"
-              href="#"
+          <div
+            className="user-box dropdown"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div
+              className="d-flex align-items-center nav-link"
               role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
+              onClick={handleToggleDropdown}
+              aria-expanded={showDropdown}
             >
               <img
-                src="assets/images/avatars/avatar-2.png"
+                src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"
                 className="user-img"
                 alt="user avatar"
               />
@@ -238,8 +264,12 @@ const Header = () => {
                 <p className="user-name mb-0">User Name</p>
                 <p className="designattion mb-0">Seller</p>
               </div>
-            </a>
-            <ul className="dropdown-menu dropdown-menu-end">
+            </div>
+            <ul
+              className={`dropdown-menu dropdown-menu-end ${
+                showDropdown ? "show" : ""
+              }`}
+            >
               <li>
                 <a className="dropdown-item" href="javascript:;">
                   <i className="bx bx-user"></i>
@@ -254,13 +284,13 @@ const Header = () => {
               </li>
               <li>
                 <a className="dropdown-item" href="javascript:;">
-                  <i className="bx bx-home-circle"></i>
+                  <MdOutlineDashboard color="#29456B" fontSize={25} />
                   <span>Dashboard</span>
                 </a>
               </li>
               <li>
                 <a className="dropdown-item" href="javascript:;">
-                  <i className="bx bx-dollar-circle"></i>
+                  <MdOutlineMonetizationOn color="#29456B" fontSize={25} />
                   <span>Earnings</span>
                 </a>
               </li>
@@ -275,7 +305,7 @@ const Header = () => {
               </li>
               <li>
                 <a className="dropdown-item" href="javascript:;">
-                  <i className="bx bx-log-out-circle"></i>
+                  <CiLogout color="#29456B" fontSize={25} />
                   <span>Logout</span>
                 </a>
               </li>
