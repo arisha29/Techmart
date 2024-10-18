@@ -1732,22 +1732,6 @@ a {
     color: #b4d2ff;
 }
 
-
-
-.section-authentication-signin {
-	height: 100vh
-}
-
-.authentication-forgot {
-	height: 100vh;
-	padding: 0 1rem
-}
-
-.authentication-reset-password {
-	height: 100vh;
-	padding: 0 1rem
-}
-
 .authentication-lock-screen {
 	height: 100vh;
 	padding: 0 1rem
@@ -1771,31 +1755,12 @@ a {
 	box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075)!important
 }
 
-.bg-forgot,.bg-login {
-	background-image: url(../Images/bg-img.jpg);
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-attachment: fixed
-}
-
 .bg-lock-screen {
 	background-image: url(../images/login-images/bg-lock-screen.jpg);
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-attachment: fixed
-}
-
-.login-separater span {
-	position: relative;
-	top: 26px;
-	margin-top: -10px;
-	background: #fff;
-	padding: 5px;
-	font-size: 12px;
-	color: #cbcbcb;
-	z-index: 1
 }
 
 .btn i {
@@ -2534,15 +2499,6 @@ input.search-control-2::placeholder {
 }
 
 @media screen and (max-width:991px) {
-	.section-authentication-signin {
-		height: 100%;
-		margin-top: 6rem;
-		margin-bottom: 2rem
-	}
-	.authentication-reset-password {
-		height: auto;
-		padding: 2rem 1rem
-	}
 	.authentication-lock-screen {
 		height: auto;
 		padding: 2rem 1rem
@@ -2559,10 +2515,6 @@ input.search-control-2::placeholder {
 @media screen and (max-width:767px) {
 	.user-box .user-info {
 		display: none
-	}
-	.authentication-forgot {
-		height: auto;
-		padding: 2.5rem 1rem
 	}
 }
 

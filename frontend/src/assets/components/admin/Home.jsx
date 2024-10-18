@@ -1,14 +1,15 @@
-import '../../css/app.css';
-import Header from "./Header";
-import SideBar from "./SideBar";
+import "../../css/app.css";
+import './layouts/admin.css';
+import Header from "./layouts/Header";
+import SideBar from "./layouts/SideBar";
 
 const Home = () => {
   return (
     <>
       <Header />
-      <SideBar/>
+      <SideBar />
     </>
   );
-}
+};
 
-export default Home
+export default Home;

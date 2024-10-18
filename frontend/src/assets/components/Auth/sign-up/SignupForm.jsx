@@ -1,3 +1,4 @@
+import './sign-up.css';
 import { FaFacebookF } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
 import { IoMdPerson } from "react-icons/io";
@@ -48,32 +49,18 @@ const SignupForm = () => {
                       </div>
                       <div className="form-body">
                         <form className="row g-3">
-                          <div className="col-sm-6">
+                          <div className="col-12">
                             <label
                               htmlFor="inputFirstName"
                               className="form-label"
                             >
-                              First Name
+                               Name
                             </label>
                             <input
                               type="email"
                               className="form-control"
                               id="inputFirstName"
-                              placeholder="Jhon"
-                            />
-                          </div>
-                          <div className="col-sm-6">
-                            <label
-                              htmlFor="inputLastName"
-                              className="form-label"
-                            >
-                              Last Name
-                            </label>
-                            <input
-                              type="email"
-                              className="form-control"
-                              id="inputLastName"
-                              placeholder="Deo"
+                              placeholder="Jhon Deo"
                             />
                           </div>
                           <div className="col-12">
@@ -111,8 +98,7 @@ const SignupForm = () => {
                               <a
                                 href="javascript:;"
                                 className="input-group-text bg-transparent"
-                              >
-                              </a>
+                              ></a>
                             </div>
                           </div>
                           <div className="col-12">

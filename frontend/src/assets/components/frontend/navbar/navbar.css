@@ -1,0 +1,89 @@
+.nav {
+    background-color: #fff;
+    width: auto;
+}
+
+.logo-img {
+    width: 15%;
+}
+
+#site-name,
+#productsDropdown,
+#sign-in {
+    color: #29456B;
+    font-weight: 600;
+}
+
+.dropdown-menu {
+    min-width: 200px;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu-right {
+    top: 0;
+    left: 102%;
+    margin-left: 0.1rem;
+    position: absolute;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    font-size: 1rem;
+    color: #29456B !important;
+}
+
+.add-product-btn, .sign-in-btn {
+    width: 10.5rem;
+    font-weight: 600;
+}
+
+/* Responsive for small devices */
+
+@media screen and (max-width: 575px) {
+    .tm-sm-nav {
+        width: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    #productsDropdown {
+        display: block;
+    }
+}
+
+/* Responsive for medium devices */
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+
+    #productsDropdown {
+        display: block;
+    }
+
+    .tm-sm-nav {
+        width: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+/* Responsive for medium & large devices */
+
+@media (min-width:769px) and (max-width:992px) {
+    .tm-sm-nav {
+        width: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+@media (min-width: 769px) and (max-width:2560px) {
+    #productsDropdown {
+        display: none;
+    }
+}
