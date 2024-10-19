@@ -1,6 +1,6 @@
-.nav2 {
+.header2 {
     width: 100%;
-    background-color: grey;
+    /* background-color: grey; */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -38,12 +38,13 @@
 }
 
 #search-bar {
-    background-color: #f0f0f0;
+    /* background-color: #f0f0f0; */
+    background-color: #ffff;
 }
 
 /* Responsive for small devices */
 @media screen and (max-width: 575px) {
-    .nav2 {
+    .header2 {
         flex-direction: column-reverse;
     }
 
@@ -76,7 +77,7 @@
 /* Responsive for medium devices */
 
 @media screen and (min-width: 576px) and (max-width: 768px) {
-    .nav2 {
+    .header2 {
         flex-direction: column-reverse;
     }
 

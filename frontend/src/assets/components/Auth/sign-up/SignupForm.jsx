@@ -1,7 +1,8 @@
-import './sign-up.css';
+import "./sign-up.css";
 import { FaFacebookF } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
 import { IoMdPerson } from "react-icons/io";
+import { NavLink } from "react-router-dom";
 
 const SignupForm = () => {
   return (
@@ -18,7 +19,7 @@ const SignupForm = () => {
                         <h3 className="fw-bold">Sign Up</h3>
                         <p>
                           Already have an account?
-                          <a href="authentication-signin.html">Sign in here</a>
+                          <NavLink to="/login">Sign in here</NavLink>
                         </p>
                       </div>
                       <div className="d-grid">
@@ -54,7 +55,7 @@ const SignupForm = () => {
                               htmlFor="inputFirstName"
                               className="form-label"
                             >
-                               Name
+                              Name
                             </label>
                             <input
                               type="email"

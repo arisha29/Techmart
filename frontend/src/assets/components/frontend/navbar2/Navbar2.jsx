@@ -31,7 +31,7 @@ const Navbar2 = () => {
   };
 
   return (
-    <Container className="nav2 py-2">
+    <Container className="header2 py-2">
       <div
         className="dropdown mx-3"
         onMouseEnter={handleMouseEnter}
@@ -52,15 +52,15 @@ const Navbar2 = () => {
           <Nav.Link className="dropdown-item" href="#">
             Laptops
           </Nav.Link>
-          <Dropdown.Divider />
+          <hr />
           <Nav.Link className="dropdown-item" href="#">
             Smartphones
           </Nav.Link>
-          <Dropdown.Divider />
+          <hr />
           <Nav.Link className="dropdown-item" href="#">
             Tablets
           </Nav.Link>
-          <Dropdown.Divider />
+          <hr />
           {/* Nested Dropdown for Accessories */}
           <div
             className="dropdown-submenu"
@@ -110,7 +110,7 @@ const Navbar2 = () => {
         <div className="search-icon-container me-3" onClick={toggleSearchInput}>
           <FaSearch fontSize={25} color="#29456B" />
         </div>
-        <div>
+        <div className="">
           <a href="#" className="me-3">
             <FaCartShopping fontSize={25} color="#29456B" />
           </a>
