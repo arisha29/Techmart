@@ -1,63 +1,10 @@
+import './login.css';
 import { FaUnlockAlt } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
 
 const LoginForm = () => {
   return (
-    // <Form classNameName="login-form rounded p-4 my-3">
-    //   <h5 classNameName="text-center">Login Your Account</h5>
-    //   <Form.Group classNameName="my-3" controlId="formBasicEmail">
-    //     <Form.Label>Email address</Form.Label>
-    //     <Form.Control type="email" placeholder="Enter email" classNameName="py-3" />
-    //     <Form.Text classNameName="text-muted">
-    //       <small>We'll never share your email with anyone else.</small>
-    //     </Form.Text>
-    //   </Form.Group>
-
-    //   <Form.Group classNameName="my-3" controlId="formBasicPassword">
-    //     <Form.Label>Password</Form.Label>
-    //     <Form.Control type="password" placeholder="Password" classNameName="py-3" />
-    //   </Form.Group>
-    //   <Form.Group
-    //     classNameName="mb-3 d-flex align-items-center justify-content-between"
-    //     controlId="formBasicCheckbox"
-    //   >
-    //     <Form.Check type="checkbox" label="Remember Me" />
-    //     <a href="#" classNameName="form-link">
-    //       Forget Password?
-    //     </a>
-    //   </Form.Group>
-    //   <Button
-    //     classNameName="text-center w-100 fs-5 py-2 mb-3"
-    //     type="submit"
-    //     id="custom-bg-btn"
-    //   >
-    //     Sign In
-    //   </Button>
-    //   <p classNameName="text-center">Or login with</p>
-    //   <div classNameName="d-flex align-items-center justify-content-center gap-5 text-center mb-3">
-    //     <Button
-    //       type="submit"
-    //       id="custom-btn"
-    //       classNameName="d-flex align-items-center px-5 py-2"
-    //     >
-    //       <FaFacebookF fontSize={25} />
-    //       <span classNameName="ms-3">Facebook</span>
-    //     </Button>
-    //     <Button
-    //       type="submit"
-    //       id="custom-btn"
-    //       classNameName="d-flex align-items-center px-5 py-2"
-    //     >
-    //       <FaGoogle fontSize={25} />
-    //       <span classNameName="ms-3">Google</span>
-    //     </Button>
-    //   </div>
-    //   <p classNameName="text-center mb-0">
-    //     You Don't have any account?<a href="#">Sign Up</a>
-    //   </p>
-    // </Form>
-
     <div className="bg-login">
       <div className="wrapper">
         <div className="section-authentication-signin d-flex align-items-center justify-content-center my-5 my-lg-0">
@@ -97,7 +44,7 @@ const LoginForm = () => {
                         </a>
                       </div>
                       <div className="login-separater text-center mb-4">
-                        {" "}
+                      
                         <span>OR SIGN IN WITH EMAIL</span>
                         <hr />
                       </div>
@@ -134,12 +81,12 @@ const LoginForm = () => {
                                 id="inputChoosePassword"
                                 value="12345678"
                                 placeholder="Enter Password"
-                              />{" "}
+                              />
                               <a
                                 href="javascript:;"
                                 className="input-group-text bg-transparent"
                               >
-                                <i className="bx bx-hide"></i>
+                                {/* <i className="bx bx-hide"></i> */}
                               </a>
                             </div>
                           </div>

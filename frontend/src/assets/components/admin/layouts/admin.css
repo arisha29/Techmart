@@ -1,0 +1,141 @@
+body {
+    background-color: red !important;
+}
+
+nav {
+    height: 60px;
+    background-color: #fff;
+    padding-left: 17rem;
+    padding-right: 1.5rem;
+}
+
+.nav {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.search-input-container {
+    width: 50%;
+}
+
+.search-icon-container {
+    cursor: pointer;
+    display: none;
+}
+
+.divider {
+    width: 1.5px;
+    height: 2.5rem;
+    background-color: rgba(128, 128, 128, 0.662);
+}
+
+.user-img {
+    width: 30%;
+}
+
+.dropdown-menu {
+    min-width: 200px;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu-right {
+    top: 0;
+    left: 102%;
+    margin-left: 0.1rem;
+    position: absolute;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    font-size: 1rem;
+    color: #29456B !important;
+}
+
+.dropdown-item:hover {
+    background-color: #E2EDFF;
+}
+
+/* Responsive for small devices */
+@media screen and (max-width: 575px) {
+    nav {
+        height: 60px;
+        background-color: #fff;
+        padding-left: 0;
+        padding-right: 0.2rem;
+        position: relative;
+    }
+
+    .search-input-container {
+        width: 85%;
+        padding: 0 1rem;
+        position: absolute;
+        bottom: -3rem;
+    }
+
+    .search-input {
+        display: none;
+        width: 100%;
+    }
+
+    .search-input.show {
+        display: block;
+    }
+
+    .search-icon-container {
+        display: block;
+        position: absolute;
+        right: 1rem;
+        bottom: -2.5rem;
+    }
+
+    .user-img {
+        width: 35px;
+        height: auto;
+    }
+
+    .userDropdown {
+        background-color: #29456B !important;
+    }
+
+    .dropdown-menu {
+        min-width: 150px;
+    }
+}
+
+/* Responsive for medium devices */
+@media (min-width:575px) and (max-width:768px) {
+    nav {
+        height: 60px;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        position: relative;
+    }
+
+    .search-input-container {
+        width: 85%;
+        padding: 0 1rem;
+        position: absolute;
+        bottom: -3rem;
+    }
+
+    .search-input {
+        display: none;
+        width: 100%;
+    }
+
+    .search-input.show {
+        display: block;
+    }
+
+    .search-icon-container {
+        display: block;
+        position: absolute;
+        right: 1rem;
+        bottom: -2.5rem;
+    }
+}

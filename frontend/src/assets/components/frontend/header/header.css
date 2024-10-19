@@ -1,0 +1,14 @@
+header {
+    background-color: #29456B;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+/* Responsive for small device */
+
+@media screen and (max-width: 575px) {
+    header {
+        font-size: 0.8rem;
+    }
+}

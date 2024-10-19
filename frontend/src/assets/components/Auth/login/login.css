@@ -1,0 +1,40 @@
+.bg-login {
+    background-image: url(../../../Images/bg-img.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed
+}
+
+.wrapper {
+    width: 100%;
+    position: relative
+}
+
+.section-authentication-signin {
+    height: 100vh
+}
+
+.login-separater span {
+    position: relative;
+    top: 26px;
+    margin-top: -10px;
+    background: #fff;
+    padding: 5px;
+    font-size: 12px;
+    color: #cbcbcb;
+    z-index: 1
+}
+
+input::placeholder {
+    color: #000 !important;
+    opacity: .3 !important
+}
+
+@media screen and (max-width:991px) {
+    .section-authentication-signin {
+        height: 100%;
+        margin-top: 6rem;
+        margin-bottom: 2rem
+    }
+}

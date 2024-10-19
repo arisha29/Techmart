@@ -1,5 +1,6 @@
+import './password.css';
 import { FaArrowLeftLong } from "react-icons/fa6";
-import svg from "../../Images/forgot-lock.png";
+import svg from "../../../Images/forgot-lock.png";
 
 const ForgotPassword = () => {
   return (
