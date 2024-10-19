@@ -11,6 +11,7 @@ import {
 import { PiSignInLight } from "react-icons/pi";
 import { MdOutlineAddCircle } from "react-icons/md";
 import logo from "../../../Images/Logo.png";
+import { NavLink } from "react-router-dom";
 
 const Navigationbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -29,10 +30,10 @@ const Navigationbar = () => {
     <Navbar expand="lg" className="nav">
       <Container className="d-flex align-items-center justify-content-between px-0">
         <div className="tm-sm-nav px-0">
-          <Navbar.Brand href="#home" className="fw-bold fs-4" id="site-name">
+          <NavLink to="/" className="fw-bold fs-4" id="site-name">
             <Image src={logo} className="logo-img img-fluid" />
-            <span className="">Techmart</span>
-          </Navbar.Brand>
+            <span>Techmart</span>
+          </NavLink>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
         </div>
 
@@ -105,15 +106,14 @@ const Navigationbar = () => {
             </div>
           </Nav>
 
-          <Nav.Link
-            href="#home"
+          <NavLink to="/login"
             className="sign-in-btn d-flex align-items-center gap-1"
             id="sign-in"
           >
             <PiSignInLight fontSize={25} color="#29456B" />
-            Sign In
-          </Nav.Link>
-          <Nav.Link href="#link">
+            <span>Sign In</span>
+          </NavLink>
+          <NavLink to="/login">
             <Button
               className="add-product-btn d-flex align-items-center gap-1"
               id="custom-btn"
@@ -121,7 +121,7 @@ const Navigationbar = () => {
               <MdOutlineAddCircle fontSize={25} />
               Add Product
             </Button>
-          </Nav.Link>
+          </NavLink>
         </Navbar.Collapse>
       </Container>
     </Navbar>

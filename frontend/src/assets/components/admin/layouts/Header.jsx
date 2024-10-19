@@ -20,19 +20,19 @@ const Header = () => {
   };
 
   return (
-    <nav>
-      <div className="nav">
+    <nav className="topbar">
+      <div className="admin-nav">
         <div className="d-lg-none">
           <img src={logo} alt="" width={50} />
         </div>
-        <div className="search-input-container">
+        <div className="admin-search-input-container">
           <Form.Control
             type="email"
             placeholder="Type to search..."
             className={`search-input ${showInput ? "show" : "hide"}`}
           />
         </div>
-        <div className="search-icon-container" onClick={toggleSearchInput}>
+        <div className="admin-search-icon" onClick={toggleSearchInput}>
           <IoSearchOutline fontSize={25} />
         </div>
         <div className="d-flex align-items-center">
@@ -44,7 +44,7 @@ const Header = () => {
             onMouseLeave={handleMouseLeave}
           >
             <Nav.Link
-              className="dropdown-toggle fs-6 px-0 mb-0"
+              className="dropdown-toggle fs-6 px-0 mb-0 user-info"
               onClick={handleToggleDropdown}
               aria-expanded={showDropdown}
             >

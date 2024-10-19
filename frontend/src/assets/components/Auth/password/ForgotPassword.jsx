@@ -1,6 +1,7 @@
-import './password.css';
+import "./password.css";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import svg from "../../../Images/forgot-lock.png";
+import { NavLink } from "react-router-dom";
 
 const ForgotPassword = () => {
   return (
@@ -14,7 +15,7 @@ const ForgotPassword = () => {
                   <div className="text-center">
                     <img src={svg} width="150" alt="" />
                   </div>
-                  <h4 className="mt-5 font-weight-bold">Forgot Password?</h4>
+                  <h4 className="mt-5 font-weight-bold text-center">Forgot Password?</h4>
                   <p className="text-muted">
                     Enter your registered email ID to reset the password
                   </p>
@@ -34,14 +35,15 @@ const ForgotPassword = () => {
                     >
                       Send
                     </button>
-                    <button
-                      href="authentication-signin.html"
-                      className="d-flex align-items-center justify-content-center gap-2 fs-6 py-2 rounded"
-                      id="custom-btn"
-                    >
-                      <FaArrowLeftLong />
-                      <span>Back to Login</span>
-                    </button>
+                    <NavLink to="/login">
+                      <button
+                        className="w-100 d-flex align-items-center justify-content-center gap-2 fs-6 py-2 rounded"
+                        id="custom-btn"
+                      >
+                        <FaArrowLeftLong />
+                        <span>Back to Login</span>
+                      </button>
+                    </NavLink>
                   </div>
                 </div>
               </div>

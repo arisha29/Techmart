@@ -1,7 +1,8 @@
-import './login.css';
+import "./login.css";
 import { FaUnlockAlt } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 const LoginForm = () => {
   return (
@@ -18,7 +19,7 @@ const LoginForm = () => {
                         <h3 className="fw-bold">Sign in</h3>
                         <p>
                           Don't have an account yet?
-                          <a href="authentication-signup.html">Sign up here</a>
+                          <NavLink to="/sign-up">Sign up here</NavLink>
                         </p>
                       </div>
                       <div className="d-grid">
@@ -44,7 +45,6 @@ const LoginForm = () => {
                         </a>
                       </div>
                       <div className="login-separater text-center mb-4">
-                      
                         <span>OR SIGN IN WITH EMAIL</span>
                         <hr />
                       </div>
@@ -106,10 +106,8 @@ const LoginForm = () => {
                             </div>
                           </div>
                           <div className="col-md-6 text-end">
-                            {" "}
-                            <a href="authentication-forgot-password.html">
-                              Forgot Password ?
-                            </a>
+                            <NavLink to="/forgot-password">
+                              Forgot Password ?</NavLink>
                           </div>
                           <div className="col-12">
                             <div className="d-grid">
