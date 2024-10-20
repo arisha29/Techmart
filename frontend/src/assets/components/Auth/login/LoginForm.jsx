@@ -3,8 +3,21 @@ import { FaUnlockAlt } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import AuthUser from "../AuthUser";
 
 const LoginForm = () => {
+  const { http } = AuthUser();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  const FormSubmit = () => {
+    //api call
+    http.post("/login", { Email: email, Password: password }).then((res) => {
+      console.log(res.data);
+    });
+  };
+
   return (
     <div className="bg-login">
       <div className="wrapper">
@@ -60,8 +73,9 @@ const LoginForm = () => {
                             <input
                               type="email"
                               className="form-control"
-                              id="inputEmailAddress"
+                              id="email"
                               placeholder="Email Address"
+                              onChange={(e) => setEmail(e.target.value)}
                             />
                           </div>
                           <div className="col-12">
@@ -78,9 +92,10 @@ const LoginForm = () => {
                               <input
                                 type="password"
                                 className="form-control border-end-0"
-                                id="inputChoosePassword"
-                                value="12345678"
+                                id="password"
+                                // value="12345678"
                                 placeholder="Enter Password"
+                                onChange={(e) => setPassword(e.target.value)}
                               />
                               <a
                                 href="javascript:;"
@@ -107,12 +122,14 @@ const LoginForm = () => {
                           </div>
                           <div className="col-md-6 text-end">
                             <NavLink to="/forgot-password">
-                              Forgot Password ?</NavLink>
+                              Forgot Password ?
+                            </NavLink>
                           </div>
                           <div className="col-12">
                             <div className="d-grid">
                               <button
-                                type="submit"
+                                type="button"
+                                onClick={FormSubmit}
                                 className="btn text-white d-flex justify-content-center align-items-center gap-2"
                                 id="custom-bg-btn"
                               >
