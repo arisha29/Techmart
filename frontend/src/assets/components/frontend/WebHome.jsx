@@ -1,4 +1,3 @@
-// import "../../../App.css";
 import { useEffect } from "react";
 import Header from "./header/Header";
 import Navigationbar from "./navbar/Navigationbar";

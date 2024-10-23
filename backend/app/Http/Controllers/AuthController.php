@@ -14,10 +14,10 @@ class AuthController extends Controller
      *
      * @return void
      */
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:api', ['except' => ['login']]);
-    // }
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+    }
 
     /**
      * Get a JWT via given credentials.
@@ -29,29 +29,52 @@ class AuthController extends Controller
     {
         $validate = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|max:6|confirmed',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
-            'name' => $validate['name'],
-            'email' => $validate['email'],
-            'password' => bcrypt($validate['password']),
-        ]);
+        // $user = User::create([
+        //     'name' => $validate['name'],
+        //     'email' => $validate['email'],
+        //     'password' => bcrypt($validate['password']),
+        // ]);
 
-        $token = auth('api')->login($user);
+        // return $user;
 
-        return $this->respondWithToken($token);
+        try {
+            $user = User::create([
+                'name' => $validate['name'],
+                'email' => $validate['email'],
+                'password' => bcrypt($validate['password']),
+            ]);
+
+            return response()->json([
+                'message' => 'User registered successfully.',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+            ], 201); // Return 201 Created response
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'User registration failed.'], 500);
+        }
     }
     public function login()
     {
         $credentials = request(['email', 'password']);
 
-        if (!$token = auth()->attempt($credentials)) {
+        if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+        $user = User::where('email', request(['email']))->first();
+
+        return response()->json([
+            'message' => 'Successfully logged in',
+            'token' => $token,
+            'user' => $user
+        ], 200);
     }
 
     /**
