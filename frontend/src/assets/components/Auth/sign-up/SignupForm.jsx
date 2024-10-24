@@ -3,8 +3,108 @@ import { FaFacebookF } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
 import { IoMdPerson } from "react-icons/io";
 import { NavLink } from "react-router-dom";
+import AlertMsg from "../../AlertMsg";
+import AuthUser from "../AuthUser";
+import { useState } from "react";
+import Verification from "./Verification";
+import { toast } from "react-toastify";
 
 const SignupForm = () => {
+  const { http } = AuthUser();
+  const [FormData, SetFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
+    termsAccepted: false,
+  });
+
+  const [errors, setErrors] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [showVerification, setShowVerification] = useState(false);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const handleInputChange = (e) => {
+    SetFormData({
+      ...FormData,
+      [e.target.name]:
+        e.target.type === "checkbox" ? e.target.checked : e.target.value,
+    });
+  };
+
+  const ValidateForm = () => {
+    const errors = [];
+
+    if (!FormData.name) errors.push("Name is required.");
+    if (!FormData.email) errors.push("Email is required.");
+    else if (!emailRegex.test(FormData.email))
+      errors.push("Invalid email format.");
+    if (!FormData.password) errors.push("Password is required.");
+    if (FormData.password_confirmation !== FormData.password)
+      errors.push("Passwords do not match.");
+    if (!FormData.termsAccepted)
+      errors.push("You must accept the terms and conditions.");
+
+    setErrors(errors);
+    return errors.length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setErrors([]);
+
+    if (!ValidateForm()) return;
+
+    setIsSubmitting(true);
+    // Log form data to console
+    console.log(FormData);
+
+    try {
+      const response = await http.post("register", {
+        name: FormData.name,
+        email: FormData.email,
+        password: FormData.password,
+        password_confirmation: FormData.password_confirmation,
+      });
+      console.log("Backend Response", response.data);
+
+      setUserEmail(FormData.email);
+
+      SetFormData({
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+        termsAccepted: false,
+      });
+
+      toast.success(
+        "Successfully registered. Please check your email to verify your account."
+      );
+
+      setShowVerification(true);
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.message ||
+        "An error occured during registration.";
+
+      toast.error(errorMsg);
+      console.log(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (showVerification) {
+    return (
+      <div className="verification-container">
+        <Verification userEmail={userEmail} />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-login">
       <div className="wrapper">
@@ -12,6 +112,8 @@ const SignupForm = () => {
           <div className="container">
             <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-2">
               <div className="col mx-auto">
+                {/* alert messages */}
+                {errors.length > 0 && <AlertMsg errors={errors} />}
                 <div className="card my-4">
                   <div className="card-body">
                     <div className="border p-4 rounded">
@@ -49,18 +151,18 @@ const SignupForm = () => {
                         <hr />
                       </div>
                       <div className="form-body">
-                        <form className="row g-3">
+                        <form className="row g-3" onSubmit={handleSubmit}>
                           <div className="col-12">
-                            <label
-                              htmlFor="inputFirstName"
-                              className="form-label"
-                            >
+                            <label htmlFor="inputName" className="form-label">
                               Name
                             </label>
                             <input
-                              type="email"
+                              type="text"
                               className="form-control"
-                              id="inputFirstName"
+                              id="inputName"
+                              name="name"
+                              value={FormData.name}
+                              onChange={handleInputChange}
                               placeholder="Jhon Deo"
                             />
                           </div>
@@ -75,12 +177,15 @@ const SignupForm = () => {
                               type="email"
                               className="form-control"
                               id="inputEmailAddress"
+                              name="email"
+                              value={FormData.email}
+                              onChange={handleInputChange}
                               placeholder="example@user.com"
                             />
                           </div>
                           <div className="col-12">
                             <label
-                              htmlFor="inputChoosePassword"
+                              htmlFor="inputPassword"
                               className="form-label"
                             >
                               Password
@@ -92,10 +197,12 @@ const SignupForm = () => {
                               <input
                                 type="password"
                                 className="form-control border-end-0"
-                                id="inputChoosePassword"
-                                value="12345678"
+                                id="inputPassword"
+                                name="password"
+                                value={FormData.password}
+                                onChange={handleInputChange}
                                 placeholder="Enter Password"
-                              />{" "}
+                              />
                               <a
                                 href="javascript:;"
                                 className="input-group-text bg-transparent"
@@ -104,7 +211,7 @@ const SignupForm = () => {
                           </div>
                           <div className="col-12">
                             <label
-                              htmlFor="inputChoosePassword"
+                              htmlFor="inputConfirmPassword"
                               className="form-label"
                             >
                               Confirm Password
@@ -116,10 +223,12 @@ const SignupForm = () => {
                               <input
                                 type="password"
                                 className="form-control border-end-0"
-                                id="inputChoosePassword"
-                                value="12345678"
+                                id="inputConfirmPassword"
+                                name="password_confirmation"
+                                value={FormData.password_confirmation}
+                                onChange={handleInputChange}
                                 placeholder="Confirm Password"
-                              />{" "}
+                              />
                               <a
                                 href="javascript:;"
                                 className="input-group-text bg-transparent"
@@ -132,6 +241,9 @@ const SignupForm = () => {
                                 className="form-check-input"
                                 type="checkbox"
                                 id="flexSwitchCheckChecked"
+                                name="termsAccepted"
+                                value={FormData.termsAccepted}
+                                onChange={handleInputChange}
                               />
                               <label
                                 className="form-check-label"
@@ -147,9 +259,10 @@ const SignupForm = () => {
                                 type="submit"
                                 className="btn text-white d-flex justify-content-center align-items-center gap-2"
                                 id="custom-bg-btn"
+                                disabled={isSubmitting}
                               >
                                 <IoMdPerson />
-                                <span>Sign up</span>
+                                {isSubmitting ? "Submitting..." : "Sign up"}
                               </button>
                             </div>
                           </div>
