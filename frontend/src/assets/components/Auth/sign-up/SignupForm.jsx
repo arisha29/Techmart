@@ -7,6 +7,7 @@ import AlertMsg from "../../AlertMsg";
 import AuthUser from "../AuthUser";
 import { useState } from "react";
 import Verification from "./Verification";
+import { toast } from "react-toastify";
 
 const SignupForm = () => {
   const { http } = AuthUser();
@@ -19,9 +20,8 @@ const SignupForm = () => {
   });
 
   const [errors, setErrors] = useState([]);
-  const [alertMsg, setAlertMsg] = useState(null);
-  const [alertType, setAlertType] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
   const [showVerification, setShowVerification] = useState(false);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -53,9 +53,7 @@ const SignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    //clear previous messages
-    setAlertMsg(null);
-    setAlertType(null);
+    setErrors([]);
 
     if (!ValidateForm()) return;
 
@@ -72,8 +70,8 @@ const SignupForm = () => {
       });
       console.log("Backend Response", response.data);
 
-      setAlertMsg("Registration Successfully.");
-      setAlertType("success");
+      setUserEmail(FormData.email);
+
       SetFormData({
         name: "",
         email: "",
@@ -82,14 +80,17 @@ const SignupForm = () => {
         termsAccepted: false,
       });
 
+      toast.success(
+        "Successfully registered. Please check your email to verify your account."
+      );
+
       setShowVerification(true);
     } catch (error) {
       const errorMsg =
         error.response?.data?.message ||
         "An error occured during registration.";
 
-      setAlertMsg(errorMsg);
-      setAlertType("error");
+      toast.error(errorMsg);
       console.log(error);
     } finally {
       setIsSubmitting(false);
@@ -99,7 +100,7 @@ const SignupForm = () => {
   if (showVerification) {
     return (
       <div className="verification-container">
-        <Verification />
+        <Verification userEmail={userEmail} />
       </div>
     );
   }
@@ -112,7 +113,6 @@ const SignupForm = () => {
             <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-2">
               <div className="col mx-auto">
                 {/* alert messages */}
-                {alertMsg && <AlertMsg type={alertType} msg={alertMsg} />}
                 {errors.length > 0 && <AlertMsg errors={errors} />}
                 <div className="card my-4">
                   <div className="card-body">
@@ -263,7 +263,6 @@ const SignupForm = () => {
                               >
                                 <IoMdPerson />
                                 {isSubmitting ? "Submitting..." : "Sign up"}
-                                {/* <span>Sign up</span> */}
                               </button>
                             </div>
                           </div>

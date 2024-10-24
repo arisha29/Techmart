@@ -1,37 +1,64 @@
 import "./sign-up.css";
-import AlertMsg from "../../AlertMsg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import AuthUser from "../AuthUser";
+import { toast } from "react-toastify";
+import VerifiedUser from "./VerifiedUser";
+import { useNavigate } from "react-router-dom";
 
 const Verification = ({ userEmail }) => {
+  const { http } = AuthUser();
   const [code, setCode] = useState("");
-  const [alertMsg, setAlertMsg] = useState(null);
-  const [alertType, setAlertType] = useState(null);
-  const [error, setError] = useState(null);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
-  const handleVerificationCode = (e) => {
+  const handleVerificationCode = async (e) => {
     e.preventDefault();
 
-    setAlertMsg(null);
-    setAlertType(null);
+    setIsSubmitting(true);
+    try {
+      const response = await http.post("verify", {
+        email: userEmail,
+        code,
+      });
+      console.log("Backend Response:", response.data);
 
-    if (code.length === 6) {
-      setAlertMsg("verify Successfully.");
-      setAlertType("success");
-      console.log("code", code);
-    }else{
-      setAlertMsg("Invalid Code.");
-      setAlertType("error");
+      if (response.data.message == "Email verified successfully.") {
+        setIsVerified(true);
+        setTimeout(() => {
+          navigate('/')
+        }, 5000);
+      } else {
+        toast.error(
+          response.data.error || "Verification failed! Please check your code."
+        );
+      }
+    } catch (error) {
+      console.log("Error verifying email", error);
+      toast.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (isVerified) {
+      const timer = setTimeout(() => {
+        navigate("/");
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [isVerified, navigate]);
+
+  if (isVerified) {
+    return <VerifiedUser />;
+  }
 
   return (
     <>
       <div className="container">
         <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-2">
           <div className="col mx-auto">
-            {/* alert messages */}
-            {alertMsg && <AlertMsg type={alertType} msg={alertMsg} />}
-            {error && <AlertMsg type={error} msg={error} />}
             <div className="card my-4">
               <div className="card-body">
                 <div className="border p-4 rounded text-center">
@@ -381,7 +408,7 @@ const Verification = ({ userEmail }) => {
                   </p>
                   <p>
                     We already send a code to
-                    <strong className="text-primary">{"userEmail"}</strong>,
+                    <strong className="text-primary ps-1">{userEmail}</strong>,
                     please check your inbox and insert it below to verify your
                     email.
                   </p>
@@ -403,8 +430,9 @@ const Verification = ({ userEmail }) => {
                           type="submit"
                           className="btn text-white d-flex justify-content-center align-items-center gap-2 mt-3"
                           id="custom-bg-btn"
+                          disabled={isSubmitting}
                         >
-                          Verify
+                          {isSubmitting ? "Verifying..." : "Verify"}
                         </button>
                       </div>
                     </div>
