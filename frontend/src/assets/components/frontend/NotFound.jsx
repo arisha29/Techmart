@@ -22,7 +22,7 @@ const NotFound = () => {
                 </p>
                 <div className="mt-5 text-center">
                   <a
-                    href="javascript:;"
+                    href="#"
                     className="btn btn-primary btn-lg px-md-5 d-flex align-items-center justify-content-center gap-2 w-100"
                     id="custom-bg-btn"
                   >
@@ -30,7 +30,7 @@ const NotFound = () => {
                     <span>Go Home</span>
                   </a>
                   {/* <a
-                    href="javascript:;"
+                    href="#"
                     className="btn btn-outline-dark btn-lg ms-3 px-md-5 "
                     id="custom-btn"
                   >

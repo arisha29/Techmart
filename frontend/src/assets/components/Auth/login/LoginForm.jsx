@@ -39,7 +39,7 @@ const LoginForm = () => {
                         <a
                           id="custom-btn"
                           className="btn my-3 shadow-sm btn-white"
-                          href="javascript:;"
+                          href="#"
                         >
                           <span className="d-flex justify-content-center align-items-center gap-2">
                             <FaGoogle fontSize={20} />
@@ -49,7 +49,7 @@ const LoginForm = () => {
                         <a
                           id="custom-btn"
                           className="btn shadow-sm btn-white"
-                          href="javascript:;"
+                          href="#"
                         >
                           <span className="d-flex justify-content-center align-items-center gap-2">
                             <FaFacebookF fontSize={20} />
@@ -98,7 +98,7 @@ const LoginForm = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                               />
                               <a
-                                href="javascript:;"
+                                href="#"
                                 className="input-group-text bg-transparent"
                               >
                                 {/* <i className="bx bx-hide"></i> */}

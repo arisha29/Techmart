@@ -1,0 +1,11 @@
+#marquee-box{
+    height: 18vh;
+    background-color: #29456B;
+}
+
+#img-container img{
+    width: 100%;
+    height: 20vh;
+    object-fit: cover;
+    mix-blend-mode: lighten;
+}
