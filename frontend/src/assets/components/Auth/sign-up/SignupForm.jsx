@@ -9,6 +9,7 @@ import { useState } from "react";
 import Verification from "./Verification";
 import { toast } from "react-toastify";
 import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 const SignupForm = () => {
   const { http } = AuthUser();
@@ -101,16 +102,19 @@ const SignupForm = () => {
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const response = await http.get("auth/google/callback", {
-          id_token: tokenResponse.credentials,
-        });
+        const response = await axios.get(
+          "http://localhost:8000/api/auth/google",
+          {
+            params: { id_token: tokenResponse.credentials },
+          }
+        );
 
         console.log(`id_token: ${tokenResponse.credentials}`);
 
         console.log(`Google Login Response: ${response.data}`);
         toast.success("Successfully logged in with Google.");
 
-        window.location.href = "/auth/google-callback";
+        window.location.href = "/auth/google/callback";
       } catch (error) {
         const errorMsg =
           error.response?.data?.message ||
