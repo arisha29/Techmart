@@ -32,6 +32,7 @@ class GoogleController extends Controller
 
             // Return the user data as JSON
             return response()->json(['user' => $user, 'message' => 'Successfully logged in with Google.'], 200);
+
         } catch (\Exception $e) {
             // Handle any errors and return a 500 error with a message
             return response()->json(['message' => 'Error during Google login: ' . $e->getMessage()], 500);
