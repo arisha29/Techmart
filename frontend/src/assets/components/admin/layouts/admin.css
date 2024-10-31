@@ -1,5 +1,5 @@
 /* body {
-    background-color: red !important;
+    background-color: rgba(255, 0, 0, 0.461) !important;
 } */
 
 .topbar {
@@ -58,6 +58,10 @@
 
 .dropdown-item:hover {
     background-color: #E2EDFF;
+}
+
+.profile-container{
+    width: 80vw !important;
 }
 
 /* Responsive for small devices */

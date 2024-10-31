@@ -147,14 +147,29 @@ class AuthController extends Controller
             $messageContent = "We have sent an email with a 6-digit verification code. Please do not share this code with anyone. It will expire in 2 minutes. Enter this code in the verification form to verify your account.";
 
             // Send verification email
-            Mail::html("
-            <h1>Email Verification</h1>
-            <p>{$messageContent}</p>
-            <p><strong>Your Verification Code Is: {$verificationCode}</strong></p>
-        ", function ($message) use ($user) {
-                $message->to($user->email)
-                    ->subject('Email Verification');
-            });
+
+            try {
+                Mail::html("
+                <h1>Email Verification</h1>
+                <p>{$messageContent}</p>
+                <p><strong>Your Verification Code Is: {$verificationCode}</strong></p>
+            ", function ($message) use ($user) {
+                    $message->to($user->email)
+                        ->subject('Email Verification');
+                });
+            } catch (\Exception $e) {
+                // Handle mail sending error
+                return response()->json(['message' => 'Failed to send verification email.'], 500);
+            }
+
+        //     Mail::html("
+        //     <h1>Email Verification</h1>
+        //     <p>{$messageContent}</p>
+        //     <p><strong>Your Verification Code Is: {$verificationCode}</strong></p>
+        // ", function ($message) use ($user) {
+        //         $message->to($user->email)
+        //             ->subject('Email Verification');
+        //     });
 
             // Increment login attempts
             Cache::increment('login_attempts_' . $user->email);

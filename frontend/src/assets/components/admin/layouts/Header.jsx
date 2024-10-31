@@ -4,6 +4,8 @@ import { IoSearchOutline, IoPersonOutline } from "react-icons/io5";
 import { MdOutlineDashboard } from "react-icons/md";
 import { CiLogout } from "react-icons/ci";
 import logo from "../../../Images/Logo.png";
+import { NavLink } from "react-router-dom";
+
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -59,13 +61,13 @@ const Header = () => {
               className={`dropdown-menu ${showDropdown ? "show" : ""}`}
               aria-labelledby="productsDropdown"
             >
-              <Nav.Link
+              <NavLink
+                to="/profile"
                 className="dropdown-item d-flex align-items-center gap-2"
-                href="#"
               >
                 <IoPersonOutline fontSize={20} color="#29456B" />
                 <span>Profile</span>
-              </Nav.Link>
+              </NavLink>
               <Nav.Link
                 className="dropdown-item d-flex align-items-center gap-2"
                 href="#"
