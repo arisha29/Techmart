@@ -3,6 +3,7 @@ import "../../css/app.css";
 import "./layouts/admin.css";
 import Header from "./layouts/Header";
 import SideBar from "./layouts/SideBar";
+import UserProfile from "./layouts/UserProfile";
 
 const Home = () => {
   useEffect(() => {
@@ -13,6 +14,7 @@ const Home = () => {
     <>
       <Header />
       <SideBar />
+      <UserProfile/>
     </>
   );
 };

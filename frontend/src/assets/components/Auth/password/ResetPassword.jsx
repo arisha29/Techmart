@@ -1,9 +1,67 @@
-import './password.css';
-import reset from '../../../Images/reset-password.jpg';
-import { FaArrowLeftLong } from "react-icons/fa6";
-
+import "./password.css";
+import reset from "../../../Images/reset-password.jpg";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import AuthUser from "../AuthUser";
 
 const ResetPassword = () => {
+  const { http } = AuthUser();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const searchParams = new URLSearchParams(location.search);
+  const [formData, setFormData] = useState({
+    token: searchParams.get("token"),
+    email: searchParams.get("email"),
+    password: "",
+    password_confirmation: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // ensure password match before submitting
+    if (formData.password !== formData.password_confirmation) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await http.post("reset/password", {
+        token: formData.token,
+        email: formData.email,
+        password: formData.password,
+        password_confirmation: formData.password_confirmation,
+      });
+
+      toast.success(response.data.message);
+
+      setFormData({
+        token: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+      });
+
+      navigate("/login");
+    } catch (error) {
+      toast.error(`${error} || An error occurred. Please try again later.`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="bg-forgot">
       <div className="wrapper">
@@ -22,39 +80,66 @@ const ResetPassword = () => {
                           We received your reset password request. Please enter
                           your new password!
                         </p>
-                        <div className="mb-3 mt-5">
-                          <label className="form-label">New Password</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Enter new password"
-                          />
-                        </div>
-                        <div className="mb-3">
-                          <label className="form-label">Confirm Password</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Confirm password"
-                          />
-                        </div>
-                        <div className="d-grid gap-2">
-                          <button
-                            type="button"
-                            className="btn btn-primary"
-                            id="custom-bg-btn"
-                          >
-                            Change Password
-                          </button>
-                          <button
-                            href="authentication-signin.html"
-                            className="d-flex align-items-center justify-content-center gap-2 fs-6 py-2 rounded mt-2"
-                            id="custom-btn"
-                          >
-                            <FaArrowLeftLong />
-                            <span>Back to Login</span>
-                          </button>
-                        </div>
+                        <form onSubmit={handleSubmit}>
+                          <div className="mb-3 mt-5">
+                            <label className="form-label">Email</label>
+                            <input
+                              type="email"
+                              name="email"
+                              className="form-control"
+                              value={formData.email || ""}
+                              disabled
+                            />
+                          </div>
+                          <div className="mb-3 d-none">
+                            <label className="form-label">Token</label>
+                            <input
+                              type="text"
+                              name="token"
+                              className="form-control"
+                              value={formData.token || ""}
+                              disabled
+                            />
+                          </div>
+                          <div className="mb-3">
+                            <label className="form-label">New Password</label>
+                            <input
+                              type="password"
+                              name="password"
+                              className="form-control"
+                              placeholder="Enter new password"
+                              value={formData.password}
+                              onChange={handleInputChange}
+                              required
+                            />
+                          </div>
+                          <div className="mb-3">
+                            <label className="form-label">
+                              Confirm Password
+                            </label>
+                            <input
+                              type="password"
+                              name="password_confirmation"
+                              className="form-control"
+                              placeholder="Confirm password"
+                              value={formData.password_confirmation}
+                              onChange={handleInputChange}
+                              required
+                            />
+                          </div>
+                          <div className="d-grid gap-2 mt-4">
+                            <button
+                              type="submit"
+                              className="btn btn-primary"
+                              id="custom-bg-btn"
+                              disabled={isSubmitting}
+                            >
+                              {isSubmitting
+                                ? "Submitting..."
+                                : "Change Password"}
+                            </button>
+                          </div>
+                        </form>
                       </div>
                     </div>
                   </div>
@@ -73,6 +158,6 @@ const ResetPassword = () => {
       </div>
     </div>
   );
-}
+};
 
 export default ResetPassword;

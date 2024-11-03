@@ -358,14 +358,6 @@ a {
 	font-size: 16px
 }
 
-.page-breadcrumb .breadcrumb-item+.breadcrumb-item::before {
-	display: inline-block;
-	padding-right: .5rem;
-	color: #6c757d;
-	font-family: LineIcons;
-	content: "\ea5c"
-}
-
 .icon-badge {
 	width: 45px;
 	height: 45px;

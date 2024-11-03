@@ -8,6 +8,8 @@ import AuthUser from "../AuthUser";
 import { useState } from "react";
 import Verification from "./Verification";
 import { toast } from "react-toastify";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 const SignupForm = () => {
   const { http } = AuthUser();
@@ -68,7 +70,6 @@ const SignupForm = () => {
         password: FormData.password,
         password_confirmation: FormData.password_confirmation,
       });
-      console.log("Backend Response", response.data);
 
       setUserEmail(FormData.email);
 
@@ -96,6 +97,36 @@ const SignupForm = () => {
       setIsSubmitting(false);
     }
   };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/api/auth/google",
+          {
+            params: { id_token: tokenResponse.credentials },
+          }
+        );
+
+        console.log(`id_token: ${tokenResponse.credentials}`);
+
+        console.log(`Google Login Response: ${response.data}`);
+        toast.success("Successfully logged in with Google.");
+
+        window.location.href = "/auth/google/callback";
+      } catch (error) {
+        const errorMsg =
+          error.response?.data?.message ||
+          "An error occurred during Google login.";
+        toast.error(errorMsg);
+        console.log(`Google Login Error: ${error}`);
+      }
+    },
+    onError: (error) => {
+      console.error(`Login Falied: ${error}`);
+      toast.error("Google sign-in was unsuccessful. Try again.");
+    },
+  });
 
   if (showVerification) {
     return (
@@ -128,18 +159,14 @@ const SignupForm = () => {
                         <a
                           id="custom-btn"
                           className="btn my-3 shadow-sm btn-white"
-                          href="javascript:;"
+                          onClick={googleLogin}
                         >
                           <span className="d-flex justify-content-center align-items-center gap-2">
                             <FaGoogle fontSize={20} />
                             <span>Sign Up with Google</span>
                           </span>
                         </a>
-                        <a
-                          id="custom-btn"
-                          className="btn shadow-sm btn-white"
-                          href="javascript:;"
-                        >
+                        <a id="custom-btn" className="btn shadow-sm btn-white">
                           <span className="d-flex justify-content-center align-items-center gap-2">
                             <FaFacebookF fontSize={20} />
                             <span>Sign Up with Facebook</span>
@@ -204,7 +231,7 @@ const SignupForm = () => {
                                 placeholder="Enter Password"
                               />
                               <a
-                                href="javascript:;"
+                                href="#"
                                 className="input-group-text bg-transparent"
                               ></a>
                             </div>
@@ -230,7 +257,7 @@ const SignupForm = () => {
                                 placeholder="Confirm Password"
                               />
                               <a
-                                href="javascript:;"
+                                href="#"
                                 className="input-group-text bg-transparent"
                               ></a>
                             </div>

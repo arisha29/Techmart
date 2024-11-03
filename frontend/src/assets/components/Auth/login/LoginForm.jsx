@@ -2,20 +2,90 @@ import "./login.css";
 import { FaUnlockAlt } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AuthUser from "../AuthUser";
+import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const { http } = AuthUser();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const navigate = useNavigate();
+  const [FormData, SetFormData] = useState({
+    email: "",
+    password: "",
+    rememberMe: false,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const FormSubmit = () => {
-    //api call
-    http.post("/login", { Email: email, Password: password }).then((res) => {
-      console.log(res.data);
+  const handleInputChange = (e) => {
+    SetFormData({
+      ...FormData,
+      [e.target.name]:
+        e.target.type === "checkbox" ? e.target.checked : e.target.value,
     });
+  };
+
+  const ValidateForm = () => {
+    let isValid = true; // Flag to track form validity
+
+    if (!FormData.email) {
+      toast.error("Email is required.");
+      isValid = false;
+    } else if (!emailRegex.test(FormData.email)) {
+      toast.error("Invalid email format.");
+      isValid = false;
+    }
+
+    if (!FormData.password) {
+      toast.error("Password is required.");
+      isValid = false;
+    }
+
+    return isValid; // Return true if valid, false otherwise
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!ValidateForm()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await http.post("login", {
+        email: FormData.email,
+        password: FormData.password,
+      });
+
+      const { token } = response.data.access_token;
+
+      // Store the token based on Remember Me option
+      if (FormData.rememberMe) {
+        localStorage.setItem("access_token", token);
+      } else {
+        sessionStorage.setItem("access_token", token);
+      }
+
+      // Clear the form data
+      SetFormData({
+        email: "",
+        password: "",
+        rememberMe: false,
+      });
+
+      // Show success toast
+      toast.success("Successfully logged in!");
+
+      // Navigate to home page
+      navigate("/");
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.message || "An error occurred during login.";
+      toast.error(errorMsg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -39,7 +109,7 @@ const LoginForm = () => {
                         <a
                           id="custom-btn"
                           className="btn my-3 shadow-sm btn-white"
-                          href="javascript:;"
+                          href="#"
                         >
                           <span className="d-flex justify-content-center align-items-center gap-2">
                             <FaGoogle fontSize={20} />
@@ -49,7 +119,7 @@ const LoginForm = () => {
                         <a
                           id="custom-btn"
                           className="btn shadow-sm btn-white"
-                          href="javascript:;"
+                          href="#"
                         >
                           <span className="d-flex justify-content-center align-items-center gap-2">
                             <FaFacebookF fontSize={20} />
@@ -62,7 +132,7 @@ const LoginForm = () => {
                         <hr />
                       </div>
                       <div className="form-body">
-                        <form className="row g-3">
+                        <form className="row g-3" onSubmit={handleSubmit}>
                           <div className="col-12">
                             <label
                               htmlFor="inputEmailAddress"
@@ -74,8 +144,10 @@ const LoginForm = () => {
                               type="email"
                               className="form-control"
                               id="email"
+                              name="email"
+                              value={FormData.email}
+                              onChange={handleInputChange}
                               placeholder="Email Address"
-                              onChange={(e) => setEmail(e.target.value)}
                             />
                           </div>
                           <div className="col-12">
@@ -93,16 +165,15 @@ const LoginForm = () => {
                                 type="password"
                                 className="form-control border-end-0"
                                 id="password"
-                                // value="12345678"
+                                name="password"
                                 placeholder="Enter Password"
-                                onChange={(e) => setPassword(e.target.value)}
+                                value={FormData.password}
+                                onChange={handleInputChange}
                               />
                               <a
-                                href="javascript:;"
+                                href="#"
                                 className="input-group-text bg-transparent"
-                              >
-                                {/* <i className="bx bx-hide"></i> */}
-                              </a>
+                              ></a>
                             </div>
                           </div>
                           <div className="col-md-6">
@@ -111,6 +182,9 @@ const LoginForm = () => {
                                 className="form-check-input"
                                 type="checkbox"
                                 id="flexSwitchCheckChecked"
+                                name="rememberMe"
+                                checked={FormData.rememberMe}
+                                onChange={handleInputChange}
                               />
                               <label
                                 className="form-check-label"
@@ -128,13 +202,13 @@ const LoginForm = () => {
                           <div className="col-12">
                             <div className="d-grid">
                               <button
-                                type="button"
-                                onClick={FormSubmit}
+                                type="submit"
                                 className="btn text-white d-flex justify-content-center align-items-center gap-2"
                                 id="custom-bg-btn"
+                                disabled={isSubmitting}
                               >
                                 <FaUnlockAlt />
-                                <span>Sign In</span>
+                                {isSubmitting ? "Submitting..." : "Sign In"}
                               </button>
                             </div>
                           </div>
