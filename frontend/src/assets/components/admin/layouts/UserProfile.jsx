@@ -1,5 +1,4 @@
-import "../../../css/app.css";
-import { CiHome } from "react-icons/ci";
+import './admin.css';
 import { GoGlobe } from "react-icons/go";
 import { RiTwitterXLine } from "react-icons/ri";
 import { FaInstagram, FaFacebookF } from "react-icons/fa";
@@ -15,11 +14,6 @@ const UserProfile = () => {
               <div className="ps-3">
                 <nav aria-label="breadcrumb">
                   <ol className="breadcrumb mb-0 p-0">
-                    <li className="breadcrumb-item">
-                      <a href="#">
-                        <CiHome color="#29456B" />
-                      </a>
-                    </li>
                     <li className="breadcrumb-item active" aria-current="page">
                       User Profile
                     </li>
@@ -28,7 +22,7 @@ const UserProfile = () => {
               </div>
             </div>
             <div className="row justify-content-around px-2 profile-container">
-              <div className="col-4 px-0">
+              <div className="col-md-4 col-lg-4 px-0">
                 <div className="card border-0">
                   <div className="card-body">
                     <div className="d-flex flex-column align-items-center text-center">
@@ -96,7 +90,7 @@ const UserProfile = () => {
                   </div>
                 </div>
               </div>
-              <div className="col-7 px-0">
+              <div className="col-md-7 col-lg-7 px-0">
                 <div className="card border-0">
                   <div className="card-body">
                     <ul className="nav nav-tabs nav-primary" role="tablist">
@@ -303,7 +297,7 @@ const UserProfile = () => {
                           <div className="col-sm-9 text-secondary">
                             <button
                               id="custom-bg-btn"
-                              className="btn text-white px-5"
+                              className="btn text-white px-5 custom-btn"
                             >
                               Save
                             </button>

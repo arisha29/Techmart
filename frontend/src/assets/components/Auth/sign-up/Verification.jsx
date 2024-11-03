@@ -21,7 +21,6 @@ const Verification = ({ userEmail }) => {
         email: userEmail,
         code,
       });
-      console.log("Backend Response:", response.data);
 
       if (response.data.message == "Email verified successfully.") {
         setIsVerified(true);
@@ -34,7 +33,6 @@ const Verification = ({ userEmail }) => {
         );
       }
     } catch (error) {
-      console.log("Error verifying email", error);
       toast.error(error);
     } finally {
       setIsSubmitting(false);

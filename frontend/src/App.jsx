@@ -1,7 +1,6 @@
 import "./App.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
 // import 'bootstrap/js/dist/tab';
-import 'bootstrap/dist/js/bootstrap';
+import "bootstrap/dist/js/bootstrap";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import WebHome from "./assets/components/frontend/WebHome";
 import Navigationbar from "./assets/components/frontend/navbar/Navigationbar";
@@ -13,12 +12,17 @@ import Home from "./assets/components/admin/Home";
 import UserProfile from "./assets/components/admin/layouts/UserProfile";
 import Header from "./assets/components/admin/layouts/Header";
 import SideBar from "./assets/components/admin/layouts/SideBar";
+import NotFound from "./assets/components/frontend/NotFound";
 
 const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
       element: <WebHome />,
+    },
+    {
+      path: "*",
+      element: <NotFound />,
     },
     {
       path: "login",
@@ -70,7 +74,7 @@ const App = () => {
         <>
           <Header />
           <UserProfile />
-          <SideBar/>
+          <SideBar />
         </>
       ),
     },

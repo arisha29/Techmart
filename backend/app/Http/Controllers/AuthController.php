@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ResetPasswordEmail;
 use App\Models\User;
 use Cache;
 use Carbon\Carbon;
+use DB;
+use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Mail;
+use Password;
 use Validator;
 
 class AuthController extends Controller
@@ -20,7 +25,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register','verifyEmail']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'verifyEmail']]);
     }
 
     /**
@@ -48,7 +53,7 @@ class AuthController extends Controller
 
             Cache::put('email_verification_' . $user->email, $verificationCode, Carbon::now()->addMinutes(2));
 
-            $messageContent = "We have sent an email with a 6-digit verification code. Please do not share this code with anyone. It will expire in 2 minute. Enter this code inside the verification form to verify your account.";
+            $messageContent = "An email containing a 6-digit verification code has been sent to you. Please keep this code confidential as it will expire in 2 minutes. Enter the code in the verification form to complete your account verification.";
 
             Mail::html("
             <h1>Email Verification</h1>
@@ -144,7 +149,7 @@ class AuthController extends Controller
             Cache::put('email_verification_' . $user->email, $verificationCode, Carbon::now()->addMinutes(2));
 
             // Message content for the email
-            $messageContent = "We have sent an email with a 6-digit verification code. Please do not share this code with anyone. It will expire in 2 minutes. Enter this code in the verification form to verify your account.";
+            $messageContent = "An email containing a 6-digit verification code has been sent to you. Please keep this code confidential as it will expire in 2 minutes. Enter the code in the verification form to complete your account verification.";
 
             // Send verification email
 
@@ -161,15 +166,6 @@ class AuthController extends Controller
                 // Handle mail sending error
                 return response()->json(['message' => 'Failed to send verification email.'], 500);
             }
-
-        //     Mail::html("
-        //     <h1>Email Verification</h1>
-        //     <p>{$messageContent}</p>
-        //     <p><strong>Your Verification Code Is: {$verificationCode}</strong></p>
-        // ", function ($message) use ($user) {
-        //         $message->to($user->email)
-        //             ->subject('Email Verification');
-        //     });
 
             // Increment login attempts
             Cache::increment('login_attempts_' . $user->email);

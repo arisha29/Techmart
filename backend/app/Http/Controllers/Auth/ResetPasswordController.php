@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Foundation\Auth\ResetsPasswords;
-use Request;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Http\Request;
 
 class ResetPasswordController extends Controller
 {
@@ -27,9 +29,4 @@ class ResetPasswordController extends Controller
      * @var string
      */
 
-     public function resetPassword(Request $request){
-
-        dd($request->all());
-     }
-    // protected $redirectTo = '/home';
 }

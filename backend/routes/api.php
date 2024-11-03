@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 Route::post('verify', [AuthController::class, 'verifyEmail']);
-Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetEmail']);
-Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('reset/password', [ForgotPasswordController::class, 'resetPassword']);
 
 // Protected Routes
 Route::middleware(['auth:api'])->group(function () {

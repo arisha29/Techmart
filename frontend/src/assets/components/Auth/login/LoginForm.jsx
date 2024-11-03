@@ -57,7 +57,6 @@ const LoginForm = () => {
         email: FormData.email,
         password: FormData.password,
       });
-      console.log("Backend Response", response.data);
 
       const { token } = response.data.access_token;
 
@@ -84,7 +83,6 @@ const LoginForm = () => {
       const errorMsg =
         error.response?.data?.message || "An error occurred during login.";
       toast.error(errorMsg);
-      console.log(error);
     } finally {
       setIsSubmitting(false);
     }

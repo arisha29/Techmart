@@ -70,7 +70,6 @@ const SignupForm = () => {
         password: FormData.password,
         password_confirmation: FormData.password_confirmation,
       });
-      console.log("Backend Response", response.data);
 
       setUserEmail(FormData.email);
 

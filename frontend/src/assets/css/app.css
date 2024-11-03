@@ -358,12 +358,6 @@ a {
 	font-size: 16px
 }
 
-.page-breadcrumb .breadcrumb-item+.breadcrumb-item::before {
-	display: inline-block;
-	padding-right: .5rem;
-	color: #6c757d;
-}
-
 .icon-badge {
 	width: 45px;
 	height: 45px;
