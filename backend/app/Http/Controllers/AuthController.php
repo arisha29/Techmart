@@ -25,7 +25,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'verifyEmail']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'verifyEmail','me']]);
     }
 
     /**
@@ -178,14 +178,13 @@ class AuthController extends Controller
         if (!$token = Auth::attempt($request->only(['email', 'password']))) {
             return response()->json(['message' => 'Invalid email or password. Please try again.'], 401);
         }
-
         // Clear login attempts after successful login
         Cache::forget('login_attempts_' . $user->email);
 
         // Return success response with token
         return $this->respondWithToken([
             'message' => 'Successfully logged in',
-            'token' => $token
+            'token' => $token,
         ], 200);
     }
 

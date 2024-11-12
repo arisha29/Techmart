@@ -1,9 +1,40 @@
-import './admin.css';
+import "./admin.css";
 import { GoGlobe } from "react-icons/go";
 import { RiTwitterXLine } from "react-icons/ri";
 import { FaInstagram, FaFacebookF } from "react-icons/fa";
+import AuthUser from "../../Auth/AuthUser";
+import { useEffect, useState } from "react";
+import Header from "./Header";
 
 const UserProfile = () => {
+  const { http } = AuthUser();
+  const [userInfo, SetUserInfo] = useState(null);
+
+  useEffect(() => {
+    const token =
+      localStorage.getItem("access_token") ||
+      sessionStorage.getItem("access_token");
+    if (token) {
+      http
+        .post(
+          "me",
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
+        .then((response) => {
+          console.log(response);
+          SetUserInfo(response.data);
+        })
+        .catch((error) => {
+          console.log(error, "error occured....");
+        });
+    } else {
+      console.log("no token found");
+    }
+  }, []);
+
   return (
     <>
       <div className="wrapper">
@@ -33,8 +64,10 @@ const UserProfile = () => {
                         width="110"
                       />
                       <div className="my-3">
-                        <h4>User Name</h4>
-                        <p className="text-secondary mb-1">User Status</p>
+                        <h4>{userInfo ? userInfo.name : "Loading..."}</h4>
+                        <p className="text-secondary mb-1">
+                          {userInfo ? userInfo.role : "Loading..."}
+                        </p>
                         <p className="text-muted font-size-sm">location</p>
                       </div>
                     </div>
@@ -120,189 +153,239 @@ const UserProfile = () => {
                           </div>
                         </a>
                       </li>
-                      {/* <li className="nav-item" role="presentation">
+                      <li className="nav-item" role="presentation">
                         <a
                           className="nav-link"
                           data-bs-toggle="tab"
-                          href="#primarycontact"
+                          href="#primarypassword"
                           role="tab"
                           aria-selected="false"
                         >
                           <div className="d-flex align-items-center">
                             <div className="tab-icon">
-                              <i className="bx bx-microphone font-18 me-1"></i>
+                              {/* <i className="bx bx-microphone font-18 me-1"></i> */}
                             </div>
-                            <div className="tab-title">Contact</div>
+                            <div className="tab-title">Passwords</div>
                           </div>
                         </a>
-                      </li> */}
+                      </li>
                     </ul>
+                    {/* tabs form */}
                     <div className="tab-content py-3">
                       <div
                         className="tab-pane fade show active"
                         role="tabpanel"
                         id="primaryhome"
                       >
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Full Name</h6>
+                        <form action="">
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Full Name</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={userInfo ? userInfo.name : "Loading..."}
+                              />
+                            </div>
                           </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="John Doe"
-                            />
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Email</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={userInfo ? userInfo.email : "Loading..."}
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Email</h6>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Mobile</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="+92 3xx-xxxxxxx"
+                              />
+                            </div>
                           </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="john@example.com"
-                            />
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Postal Code</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="23566"
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Phone</h6>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Shipping Address</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Bay Area, San Francisco, CA"
+                              />
+                            </div>
                           </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="(239) 816-9029"
-                            />
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Billing Address</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Bay Area, San Francisco, CA"
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Mobile</h6>
+                          <div className="row">
+                            <div className="col-sm-3"></div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="button"
+                                id="custom-bg-btn"
+                                className="btn text-white px-5"
+                                value="Save Changes"
+                              />
+                            </div>
                           </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="(320) 380-4539"
-                            />
-                          </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Postal Code</h6>
-                          </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="23566"
-                            />
-                          </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Shipping Address</h6>
-                          </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="Bay Area, San Francisco, CA"
-                            />
-                          </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Billing Address</h6>
-                          </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="Bay Area, San Francisco, CA"
-                            />
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-sm-3"></div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="button"
-                              id="custom-bg-btn"
-                              className="btn text-white px-5"
-                              value="Save Changes"
-                            />
-                          </div>
-                        </div>
+                        </form>
                       </div>
+                      {/* links tab */}
                       <div
                         className="tab-pane fade"
                         role="tabpanel"
                         id="primaryprofile"
                       >
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Website</h6>
+                        <form action="">
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Website</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="https://yourwebsite.com/"
+                              />
+                            </div>
                           </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="(320) 380-4539"
-                            />
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Twitter</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="https://www.twitter.com/"
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Twitter</h6>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Instagram</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="https://www.instagram.com/"
+                              />
+                            </div>
                           </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="(320) 380-4539"
-                            />
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Facebook</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="https://www.facebook.com/"
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Instagram</h6>
+                          <div className="row">
+                            <div className="col-sm-3"></div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="button"
+                                id="custom-bg-btn"
+                                className="btn text-white px-5"
+                                value="Save"
+                              />
+                            </div>
                           </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="(320) 380-4539"
-                            />
+                        </form>
+                      </div>
+                      {/* password tab */}
+                      <div
+                        className="tab-pane fade"
+                        role="tabpanel"
+                        id="primarypassword"
+                      >
+                        <form action="">
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Current Password</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="https://www.facebook.com/"
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-sm-3">
-                            <h6 className="mb-0">Facebook</h6>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">New Password</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="https://www.facebook.com/"
+                              />
+                            </div>
                           </div>
-                          <div className="col-sm-9 text-secondary">
-                            <input
-                              type="text"
-                              className="form-control"
-                              value="(320) 380-4539"
-                            />
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Confirm Password</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="https://www.facebook.com/"
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-sm-3"></div>
-                          <div className="col-sm-9 text-secondary">
-                            <button
-                              id="custom-bg-btn"
-                              className="btn text-white px-5 custom-btn"
-                            >
-                              Save
-                            </button>
+                          <div className="row">
+                            <div className="col-sm-3"></div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="button"
+                                id="custom-bg-btn"
+                                className="btn text-white px-5"
+                                value="Change Password"
+                              />
+                            </div>
                           </div>
-                        </div>
+                        </form>
                       </div>
                     </div>
                   </div>
@@ -310,6 +393,7 @@ const UserProfile = () => {
               </div>
             </div>
           </div>
+          {userInfo && <Header userName={userInfo.name} />}
         </div>
       </div>
     </>

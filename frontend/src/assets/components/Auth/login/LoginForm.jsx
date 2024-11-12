@@ -66,7 +66,7 @@ const LoginForm = () => {
       } else {
         sessionStorage.setItem("access_token", token);
       }
-
+      
       // Clear the form data
       SetFormData({
         email: "",
@@ -78,7 +78,7 @@ const LoginForm = () => {
       toast.success("Successfully logged in!");
 
       // Navigate to home page
-      navigate("/");
+      navigate("/profile");
     } catch (error) {
       const errorMsg =
         error.response?.data?.message || "An error occurred during login.";
