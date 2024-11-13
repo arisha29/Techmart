@@ -7,8 +7,35 @@ import { useEffect, useState } from "react";
 import Header from "./Header";
 
 const UserProfile = () => {
+  const cities = [
+    "Karachi",
+    "Lahore",
+    "Islamabad",
+    "Rawalpindi",
+    "Multan",
+    "Peshawar",
+    "Quetta",
+    "Faisalabad",
+    "Sialkot",
+    "Gujranwala",
+    "Hyderabad",
+    "Sukkur",
+    "Bahawalpur",
+    "Guwadar",
+    "Mardan",
+    "Swat",
+    "Abbottabad",
+    "Jhelum",
+    "Murree",
+  ];
+  const [selectedCity, setSelectedCity] = useState("");
   const { http } = AuthUser();
   const [userInfo, SetUserInfo] = useState(null);
+
+  // Handle change of selected city
+  const handleCityChange = (event) => {
+    setSelectedCity(event.target.value);
+  };
 
   useEffect(() => {
     const token =
@@ -199,6 +226,7 @@ const UserProfile = () => {
                                 type="text"
                                 className="form-control"
                                 value={userInfo ? userInfo.email : "Loading..."}
+                                disabled
                               />
                             </div>
                           </div>
@@ -212,6 +240,28 @@ const UserProfile = () => {
                                 className="form-control"
                                 placeholder="+92 3xx-xxxxxxx"
                               />
+                            </div>
+                          </div>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 htmlFor="city">City</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <select
+                                id="city"
+                                value={selectedCity}
+                                onChange={handleCityChange}
+                                className="form-control"
+                              >
+                                <option value="" disabled>
+                                  Select your city
+                                </option>
+                                {cities.map((city, index) => (
+                                  <option key={index} value={city}>
+                                    {city}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                           </div>
                           <div className="row mb-3">

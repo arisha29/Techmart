@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use DB;
 use Hash;
 use Illuminate\Http\Request;
 
@@ -55,7 +56,7 @@ class AccountController extends Controller
                 return response()->json(['message' => 'Invalid image file format.']);
             }
         }
-
+        
         $user->update();
 
         return response()->json(['message' => 'Profile updated successfully.']);
