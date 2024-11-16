@@ -5,6 +5,7 @@ import { FaInstagram, FaFacebookF } from "react-icons/fa";
 import AuthUser from "../../Auth/AuthUser";
 import { useEffect, useState } from "react";
 import Header from "./Header";
+import { toast } from "react-toastify";
 
 const UserProfile = () => {
   const cities = [
@@ -28,15 +29,89 @@ const UserProfile = () => {
     "Jhelum",
     "Murree",
   ];
-  const [selectedCity, setSelectedCity] = useState("");
+  // const [selectedCity, setSelectedCity] = useState("");
   const { http } = AuthUser();
   const [userInfo, SetUserInfo] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    name: "",
+    phone: "",
+    profile_image: "",
+  });
+  const [profileImg, setProfileImg] = useState(null);
+ 
+  // const [isPassword, setIsPassword] = useState({
+  //   current_password: "",
+  //   new_password: "",
+  //   confirm_password: "",
+  // });
 
-  // Handle change of selected city
-  const handleCityChange = (event) => {
-    setSelectedCity(event.target.value);
+  // Handle changes
+  // const handleCityChange = (event) => {
+  //   setSelectedCity(event.target.value);
+  //   setProfileForm((prevData)=>({...prevData, city: event.target.value}));
+  // };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProfileForm((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleImageChange = (e) => {
+    setProfileImg(e.target.files[0]);
+  };
+
+  // const handlePasswordChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setProfileForm((prevData) => ({ ...prevData, [name]: value }));
+  // };
+
+  // Profile Image upload
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const form = new FormData();
+
+      form.append("name", profileForm.name);
+      form.append("phone", profileForm.phone);
+
+      // if image file exist then append
+      if (profileForm.profile_image) {
+        form.append("profile_image", profileImg);
+      }
+
+      const token =
+        localStorage.getItem("access_token") ||
+        sessionStorage.getItem("access_token");
+
+      if(!token){
+        toast.error("User is not authenticated. Please login again.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const response = await http.post("profile/update", form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(`response: ${response.data}`);
+
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      console.log(
+        `error: ${error.response ? error.response.data : error.message}`
+      );
+      toast.error("Error occured in profile updation!");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // fetch user info
   useEffect(() => {
     const token =
       localStorage.getItem("access_token") ||
@@ -184,6 +259,22 @@ const UserProfile = () => {
                         <a
                           className="nav-link"
                           data-bs-toggle="tab"
+                          href="#primaryaddress"
+                          role="tab"
+                          aria-selected="false"
+                        >
+                          <div className="d-flex align-items-center">
+                            <div className="tab-icon">
+                              {/* <i className="bx bx-microphone font-18 me-1"></i> */}
+                            </div>
+                            <div className="tab-title">Addresses</div>
+                          </div>
+                        </a>
+                      </li>
+                      <li className="nav-item" role="presentation">
+                        <a
+                          className="nav-link"
+                          data-bs-toggle="tab"
                           href="#primarypassword"
                           role="tab"
                           aria-selected="false"
@@ -197,14 +288,24 @@ const UserProfile = () => {
                         </a>
                       </li>
                     </ul>
-                    {/* tabs form */}
+                    {/* profile form */}
                     <div className="tab-content py-3">
                       <div
                         className="tab-pane fade show active"
                         role="tabpanel"
                         id="primaryhome"
                       >
-                        <form action="">
+                        <form onSubmit={handleProfileUpdate}>
+                          <div className="row mb-3">
+                            <h6 className="col-sm-3">Profile Image</h6>
+                            <div className="col-sm-9">
+                              <input
+                                type="file"
+                                className="form-control"
+                                onChange={handleImageChange}
+                              />
+                            </div>
+                          </div>
                           <div className="row mb-3">
                             <div className="col-sm-3">
                               <h6 className="mb-0">Full Name</h6>
@@ -212,8 +313,10 @@ const UserProfile = () => {
                             <div className="col-sm-9 text-secondary">
                               <input
                                 type="text"
+                                name="name"
                                 className="form-control"
-                                value={userInfo ? userInfo.name : "Loading..."}
+                                value={profileForm.name}
+                                onChange={handleInputChange}
                               />
                             </div>
                           </div>
@@ -223,7 +326,7 @@ const UserProfile = () => {
                             </div>
                             <div className="col-sm-9 text-secondary">
                               <input
-                                type="text"
+                                type="email"
                                 className="form-control"
                                 value={userInfo ? userInfo.email : "Loading..."}
                                 disabled
@@ -237,78 +340,27 @@ const UserProfile = () => {
                             <div className="col-sm-9 text-secondary">
                               <input
                                 type="text"
+                                name="phone"
                                 className="form-control"
+                                value={profileForm.phone}
+                                onChange={handleInputChange}
                                 placeholder="+92 3xx-xxxxxxx"
-                              />
-                            </div>
-                          </div>
-                          <div className="row mb-3">
-                            <div className="col-sm-3">
-                              <h6 htmlFor="city">City</h6>
-                            </div>
-                            <div className="col-sm-9 text-secondary">
-                              <select
-                                id="city"
-                                value={selectedCity}
-                                onChange={handleCityChange}
-                                className="form-control"
-                              >
-                                <option value="" disabled>
-                                  Select your city
-                                </option>
-                                {cities.map((city, index) => (
-                                  <option key={index} value={city}>
-                                    {city}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                          <div className="row mb-3">
-                            <div className="col-sm-3">
-                              <h6 className="mb-0">Postal Code</h6>
-                            </div>
-                            <div className="col-sm-9 text-secondary">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="23566"
-                              />
-                            </div>
-                          </div>
-                          <div className="row mb-3">
-                            <div className="col-sm-3">
-                              <h6 className="mb-0">Shipping Address</h6>
-                            </div>
-                            <div className="col-sm-9 text-secondary">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Bay Area, San Francisco, CA"
-                              />
-                            </div>
-                          </div>
-                          <div className="row mb-3">
-                            <div className="col-sm-3">
-                              <h6 className="mb-0">Billing Address</h6>
-                            </div>
-                            <div className="col-sm-9 text-secondary">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Bay Area, San Francisco, CA"
                               />
                             </div>
                           </div>
                           <div className="row">
                             <div className="col-sm-3"></div>
                             <div className="col-sm-9 text-secondary">
-                              <input
-                                type="button"
+                              <button
+                                type="submit"
+                                className="btn text-white d-flex justify-content-center align-items-center gap-2"
                                 id="custom-bg-btn"
-                                className="btn text-white px-5"
-                                value="Save Changes"
-                              />
+                                disabled={isSubmitting}
+                              >
+                                {isSubmitting
+                                  ? "Submitting..."
+                                  : "Save Changes"}
+                              </button>
                             </div>
                           </div>
                         </form>
@@ -376,6 +428,83 @@ const UserProfile = () => {
                                 id="custom-bg-btn"
                                 className="btn text-white px-5"
                                 value="Save"
+                              />
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      {/* Address tab */}
+                      <div
+                        className="tab-pane fade"
+                        role="tabpanel"
+                        id="primaryaddress"
+                      >
+                        <form action="">
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 htmlFor="city">City</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <select id="city" className="form-control">
+                                <option value="" disabled>
+                                  Select your city
+                                </option>
+                                {cities.map((city, index) => (
+                                  <option key={index} value={city}>
+                                    {city}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Postal Code</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="number"
+                                name="zip_code"
+                                className="form-control"
+                                placeholder="23566"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Shipping Address</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                name="shipping_address"
+                                className="form-control"
+                                placeholder="Bay Area, San Francisco, CA"
+                              />
+                            </div>
+                          </div>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Billing Address</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                name="billing_address"
+                                className="form-control"
+                                placeholder="Bay Area, San Francisco, CA"
+                              />
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col-sm-3"></div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="button"
+                                id="custom-bg-btn"
+                                className="btn text-white px-5"
+                                value="Change Password"
                               />
                             </div>
                           </div>
