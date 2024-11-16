@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Models\UserLinks;
 use DB;
 use Hash;
 use Illuminate\Http\Request;
+use Validator;
 
 class AccountController extends Controller
 {
@@ -15,7 +17,7 @@ class AccountController extends Controller
 
     }
 
-    public function update(Request $request)
+    public function Profileupdate(Request $request)
     {
 
         $user = User::findOrFail(auth()->user()->id);
@@ -25,12 +27,9 @@ class AccountController extends Controller
         }
 
         $validate = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255|email|unique:users',
-            'password' => 'required|string|min:8|confirm',
-            'password_confirmation' => 'required|string|min:8',
+            'name' => 'required|string|max:100',
             'phone' => 'nullable|string|max:255',
-            'profile_image' => 'nullable|max:4096'
+            'profile_image' => 'nullable|max:4096',
         ]);
 
         if (!$validate) {
@@ -38,8 +37,6 @@ class AccountController extends Controller
         }
 
         $user->name = $request->name ?? $user->name;
-        $user->email = $request->email ?? $user->email;
-        $user->password = Hash::make($request->password);
         $user->phone = $request->phone;
 
         if ($request->hasFile('profile_image')) {
@@ -56,9 +53,73 @@ class AccountController extends Controller
                 return response()->json(['message' => 'Invalid image file format.']);
             }
         }
-        
-        $user->update();
+
+        $user->save();
 
         return response()->json(['message' => 'Profile updated successfully.']);
+    }
+
+    public function userLinks(Request $request)
+    {
+        $validate = Validator::make($request->all(), [
+            'website' => 'nullable|url',
+            'instagram' => 'nullable|url',
+            'facebook' => 'nullable|url',
+            'twitter' => 'nullable|url',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validate->errors(),
+            ], 422);
+        }
+
+        $userId = auth()->user()->id;
+
+        $existingLinks = DB::table('user_links')->where('user_id', $userId)->first();
+
+        if ($existingLinks) {
+            $updateLinks = DB::table('user_links')->where('user_id', $userId)->update([
+                'website' => $request->website,
+                'instagram' => $request->instagram,
+                'facebook' => $request->facebook,
+                'twitter' => $request->twitter,
+                'updated_at' => now()
+            ]);
+
+            if ($updateLinks) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Links updated successfully.',
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to update links. Please try again',
+                ], 500);
+            }
+        } else {
+            $links = DB::table('user_links')->insert([
+                'user_id' => auth()->user()->id,
+                'website' => $request->website,
+                'instagram' => $request->instagram,
+                'facebook' => $request->facebook,
+                'twitter' => $request->twitter,
+                'created_at' => now()
+            ]);
+
+            if ($links) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Links saved successfully.',
+                ], 201);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save links. Please try again',
+                ], 500);
+            }
+        }
     }
 }

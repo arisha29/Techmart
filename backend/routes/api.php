@@ -12,7 +12,9 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('verify', [AuthController::class, 'verifyEmail']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('reset/password', [ForgotPasswordController::class, 'resetPassword']);
-Route::post('profile/update',[AccountController::class, 'update']);
+Route::post('profile/update',[AccountController::class, 'Profileupdate']);
+Route::post('user-links', [AccountController::class, 'userLinks']);
+
 
 // Protected Routes
 Route::middleware(['auth:api'])->group(function () {
@@ -21,8 +23,4 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('me', [AuthController::class, 'me']);
     Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
     Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-});
-
-Route::post('/test', function () {
-    return response()->json(['message' => 'API is working!']);
 });
