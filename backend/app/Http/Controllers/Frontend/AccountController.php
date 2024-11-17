@@ -122,4 +122,71 @@ class AccountController extends Controller
             }
         }
     }
+
+    public function storeAddress(Request $request)
+    {
+        $validate = Validator::make($request->all(), [
+            'country' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'zip_code' => 'nullable|string|max:255',
+            'shipping_address' => 'nullable|string|max:255',
+            'billing_address' => 'nullable|string|max:255',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validate->errors(),
+            ], 422);
+        }
+
+        $userId = auth()->user()->id;
+
+        $existingAddress = DB::table('addresses')->where('user_id', $userId)->first();
+
+        if ($existingAddress) {
+            $updateAddress = DB::table('addresses')->where('user_id', $userId)->update([
+                'country' => $request->country,
+                'city' => $request->city,
+                'zip_code' => $request->zip_code,
+                'shipping_address' => $request->shipping_address,
+                'billing_address' => $request->billing_address,
+                'updated_at' => now()
+            ]);
+
+            if ($updateAddress) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Address updated successfully.',
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to update address. Please try again',
+                ], 500);
+            }
+        } else {
+            $insertAddress = DB::table('addresses')->where('user_id', $userId)->insert([
+                'user_id'=> $userId,
+                'country'=>$request->country,
+                'city' => $request->city,
+                'zip_code' => $request->zip_code,
+                'shipping_address' => $request->shipping_address,
+                'billing_address' => $request->billing_address,
+                'created_at' => now()
+            ]);
+
+            if ($insertAddress) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Address saved successfully.',
+                ], 201);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save address. Please try again',
+                ], 500);
+            }
+        }
+    }
 }

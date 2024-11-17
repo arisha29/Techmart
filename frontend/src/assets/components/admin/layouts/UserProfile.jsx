@@ -33,13 +33,21 @@ const UserProfile = () => {
   const { http } = AuthUser();
   const [userInfo, SetUserInfo] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
   const [profileForm, setProfileForm] = useState({
     name: "",
     phone: "",
     profile_image: "",
   });
   const [profileImg, setProfileImg] = useState(null);
- 
+  const [linksForm, setLinksForm] = useState({
+    website: "",
+    facebook: "",
+    instagram: "",
+    twitter: "",
+  });
+  const urlRegex = /^(https?:\/\/(?:www\.)?[a-zA-Z0-9./-]+)$/;
+
   // const [isPassword, setIsPassword] = useState({
   //   current_password: "",
   //   new_password: "",
@@ -54,7 +62,41 @@ const UserProfile = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    let updatedErrors = { ...errors };
+
+    if (name === "name") {
+      if (value.length > 50) {
+        updatedErrors[name] = "Name cannot exceed 50 characters.";
+      } else {
+        delete updatedErrors[name];
+      }
+    }
+
+    if (name === "phone") {
+      const phoneRegex = /^\+92\s3\d{2}-\d{7}$/;
+
+      if (value && !phoneRegex.test(value)) {
+        updatedErrors[name] =
+          "Enter a validate phone number (e.g. +92 312 3456789)";
+      } else {
+        delete updatedErrors[name];
+      }
+    }
+
+    if (value && !urlRegex.test(value)) {
+      updatedErrors[name] =
+        "Please enter a valide URL (e.g. https://www.example.com).";
+    } else {
+      delete updatedErrors[name];
+    }
+
+    setErrors(updatedErrors);
     setProfileForm((prevData) => ({ ...prevData, [name]: value }));
+    setLinksForm((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleImageChange = (e) => {
@@ -69,6 +111,12 @@ const UserProfile = () => {
   // Profile Image upload
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
+
+    if (Object.keys(errors).length > 0) {
+      toast.error("Please fix validation errors before submitting.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -86,7 +134,7 @@ const UserProfile = () => {
         localStorage.getItem("access_token") ||
         sessionStorage.getItem("access_token");
 
-      if(!token){
+      if (!token) {
         toast.error("User is not authenticated. Please login again.");
         setIsSubmitting(false);
         return;
@@ -106,6 +154,63 @@ const UserProfile = () => {
         `error: ${error.response ? error.response.data : error.message}`
       );
       toast.error("Error occured in profile updation!");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // user links save and update
+  const handleUserLinks = async (e) => {
+    e.preventDefault();
+
+    const formErrors = Object.keys(linksForm).reduce((acc, field) => {
+      if (linksForm[field] && !urlRegex.test(linksForm[field])) {
+        acc[field] =
+          "Please enter a valide URL (e.g. https://www.example.com).";
+      }
+      return acc;
+    }, {});
+
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const token =
+        localStorage.getItem("access_token") ||
+        sessionStorage.getItem("access_token");
+
+      if (!token) {
+        toast.error("User is not authenticated. Please login again.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const response = await http.post("user-links", {
+        website: linksForm.website,
+        instagram: linksForm.instagram,
+        facebook: linksForm.facebook,
+        twitter: linksForm.twitter,
+      },{
+        headers:{Authorization:`Bearer ${token}`},
+      });
+
+      setLinksForm({
+        website: "",
+        instagram: "",
+        facebook: "",
+        twitter: "",
+      });
+
+      console.log(response.data.message);
+
+      toast.success(`${response.data.message}`);
+    } catch (error) {
+      toast.error(error.data.message);
+      console.log(error.data.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -314,10 +419,17 @@ const UserProfile = () => {
                               <input
                                 type="text"
                                 name="name"
-                                className="form-control"
+                                className={`form-control ${
+                                  errors.name ? "is-invalid" : ""
+                                }`}
                                 value={profileForm.name}
                                 onChange={handleInputChange}
                               />
+                              {errors.name && (
+                                <small className="text-danger">
+                                  {errors.name}
+                                </small>
+                              )}
                             </div>
                           </div>
                           <div className="row mb-3">
@@ -341,11 +453,18 @@ const UserProfile = () => {
                               <input
                                 type="text"
                                 name="phone"
-                                className="form-control"
+                                className={`form-control ${
+                                  errors.phone ? "is-invalid" : ""
+                                }`}
                                 value={profileForm.phone}
                                 onChange={handleInputChange}
                                 placeholder="+92 3xx-xxxxxxx"
                               />
+                              {errors.phone && (
+                                <small className="text-danger">
+                                  {errors.phone}
+                                </small>
+                              )}
                             </div>
                           </div>
                           <div className="row">
@@ -371,64 +490,48 @@ const UserProfile = () => {
                         role="tabpanel"
                         id="primaryprofile"
                       >
-                        <form action="">
-                          <div className="row mb-3">
-                            <div className="col-sm-3">
-                              <h6 className="mb-0">Website</h6>
-                            </div>
-                            <div className="col-sm-9 text-secondary">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="https://yourwebsite.com/"
-                              />
-                            </div>
-                          </div>
-                          <div className="row mb-3">
-                            <div className="col-sm-3">
-                              <h6 className="mb-0">Twitter</h6>
-                            </div>
-                            <div className="col-sm-9 text-secondary">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="https://www.twitter.com/"
-                              />
-                            </div>
-                          </div>
-                          <div className="row mb-3">
-                            <div className="col-sm-3">
-                              <h6 className="mb-0">Instagram</h6>
-                            </div>
-                            <div className="col-sm-9 text-secondary">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="https://www.instagram.com/"
-                              />
-                            </div>
-                          </div>
-                          <div className="row mb-3">
-                            <div className="col-sm-3">
-                              <h6 className="mb-0">Facebook</h6>
-                            </div>
-                            <div className="col-sm-9 text-secondary">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="https://www.facebook.com/"
-                              />
-                            </div>
-                          </div>
+                        <form onSubmit={handleUserLinks}>
+                          {["website", "twitter", "instagram", "facebook"].map(
+                            (field) => (
+                              <div className="row mb-3" key={field}>
+                                <div className="col-sm-3">
+                                  <h6 className="mb-0">
+                                    {field.charAt(0).toUpperCase() +
+                                      field.slice(1)}
+                                  </h6>
+                                </div>
+                                <div className="col-sm-9 text-secondary">
+                                  <input
+                                    type="text"
+                                    className={`form-control ${
+                                      errors[field] ? "is-invalid" : ""
+                                    }`}
+                                    placeholder={`https://www.${field}.com/`}
+                                    name={field}
+                                    value={linksForm[field]}
+                                    onChange={handleInputChange}
+                                    required
+                                  />
+                                  {errors[field] && (
+                                    <small className="invalid-feedback">
+                                      {errors[field]}
+                                    </small>
+                                  )}
+                                </div>
+                              </div>
+                            )
+                          )}
                           <div className="row">
                             <div className="col-sm-3"></div>
                             <div className="col-sm-9 text-secondary">
-                              <input
-                                type="button"
+                              <button
+                                type="submit"
+                                className="btn text-white d-flex justify-content-center align-items-center gap-2"
                                 id="custom-bg-btn"
-                                className="btn text-white px-5"
-                                value="Save"
-                              />
+                                disabled={isSubmitting}
+                              >
+                                {isSubmitting ? "Submitting..." : "Save Links"}
+                              </button>
                             </div>
                           </div>
                         </form>
@@ -439,7 +542,22 @@ const UserProfile = () => {
                         role="tabpanel"
                         id="primaryaddress"
                       >
-                        <form action="">
+                        <form>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 htmlFor="city">Country</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="text"
+                                name="country"
+                                className="form-control"
+                                placeholder="your country"
+                                value={"Pakistan"}
+                                disabled
+                              />
+                            </div>
+                          </div>
                           <div className="row mb-3">
                             <div className="col-sm-3">
                               <h6 htmlFor="city">City</h6>
@@ -500,12 +618,14 @@ const UserProfile = () => {
                           <div className="row">
                             <div className="col-sm-3"></div>
                             <div className="col-sm-9 text-secondary">
-                              <input
-                                type="button"
+                              <button
+                                type="submit"
+                                className="btn text-white d-flex justify-content-center align-items-center gap-2"
                                 id="custom-bg-btn"
-                                className="btn text-white px-5"
-                                value="Change Password"
-                              />
+                                disabled={isSubmitting}
+                              >
+                                {isSubmitting ? "Submitting..." : "Save Address"}
+                              </button>
                             </div>
                           </div>
                         </form>

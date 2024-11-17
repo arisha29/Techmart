@@ -14,6 +14,7 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::post('reset/password', [ForgotPasswordController::class, 'resetPassword']);
 Route::post('profile/update',[AccountController::class, 'Profileupdate']);
 Route::post('user-links', [AccountController::class, 'userLinks']);
+Route::post('user-address', [AccountController::class, 'storeAddress']);
 
 
 // Protected Routes
