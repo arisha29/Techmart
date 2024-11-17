@@ -4,243 +4,196 @@ import { RiTwitterXLine } from "react-icons/ri";
 import { FaInstagram, FaFacebookF } from "react-icons/fa";
 import AuthUser from "../../Auth/AuthUser";
 import { useEffect, useState } from "react";
-import Header from "./Header";
+// import Header from "./Header";
 import { toast } from "react-toastify";
 
+const cities = [
+  "Karachi",
+  "Lahore",
+  "Islamabad",
+  "Rawalpindi",
+  "Multan",
+  "Peshawar",
+  "Quetta",
+  "Faisalabad",
+  "Sialkot",
+  "Gujranwala",
+  "Hyderabad",
+  "Sukkur",
+  "Bahawalpur",
+  "Guwadar",
+  "Mardan",
+  "Swat",
+  "Abbottabad",
+  "Jhelum",
+  "Murree",
+];
+
 const UserProfile = () => {
-  const cities = [
-    "Karachi",
-    "Lahore",
-    "Islamabad",
-    "Rawalpindi",
-    "Multan",
-    "Peshawar",
-    "Quetta",
-    "Faisalabad",
-    "Sialkot",
-    "Gujranwala",
-    "Hyderabad",
-    "Sukkur",
-    "Bahawalpur",
-    "Guwadar",
-    "Mardan",
-    "Swat",
-    "Abbottabad",
-    "Jhelum",
-    "Murree",
-  ];
-  // const [selectedCity, setSelectedCity] = useState("");
   const { http } = AuthUser();
-  const [userInfo, SetUserInfo] = useState(null);
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [profileForm, setProfileForm] = useState({
     name: "",
     phone: "",
-    profile_image: "",
+    profile_image: null,
   });
-  const [profileImg, setProfileImg] = useState(null);
   const [linksForm, setLinksForm] = useState({
     website: "",
     facebook: "",
     instagram: "",
     twitter: "",
   });
+  const [addressForm, setAddressForm] = useState({
+    country: "Pakistan",
+    city: "",
+    zip_code: "",
+    shipping_address: "",
+    billing_address: "",
+  });
+  const [isPassword, setIsPassword] = useState({
+    current_password: "",
+    password: "",
+    password_confirmation: "",
+  });
   const urlRegex = /^(https?:\/\/(?:www\.)?[a-zA-Z0-9./-]+)$/;
 
-  // const [isPassword, setIsPassword] = useState({
-  //   current_password: "",
-  //   new_password: "",
-  //   confirm_password: "",
-  // });
-
-  // Handle changes
-  // const handleCityChange = (event) => {
-  //   setSelectedCity(event.target.value);
-  //   setProfileForm((prevData)=>({...prevData, city: event.target.value}));
-  // };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-
-    let updatedErrors = { ...errors };
-
-    if (name === "name") {
-      if (value.length > 50) {
-        updatedErrors[name] = "Name cannot exceed 50 characters.";
-      } else {
-        delete updatedErrors[name];
+  // validation function
+  const validateFields = (form, rules) => {
+    const newErrors = {};
+    for (const [key, value] of Object.entries(form)) {
+      if (rules[key]?.required && !value) {
+        newErrors[key] = `${key.replace("_", "")} is required.`;
+      }
+      if (rules[key]?.regex && value && !rules[key].regex.test(value)) {
+        newErrors[key] = rules[key].message;
       }
     }
-
-    if (name === "phone") {
-      const phoneRegex = /^\+92\s3\d{2}-\d{7}$/;
-
-      if (value && !phoneRegex.test(value)) {
-        updatedErrors[name] =
-          "Enter a validate phone number (e.g. +92 312 3456789)";
-      } else {
-        delete updatedErrors[name];
-      }
-    }
-
-    if (value && !urlRegex.test(value)) {
-      updatedErrors[name] =
-        "Please enter a valide URL (e.g. https://www.example.com).";
-    } else {
-      delete updatedErrors[name];
-    }
-
-    setErrors(updatedErrors);
-    setProfileForm((prevData) => ({ ...prevData, [name]: value }));
-    setLinksForm((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleImageChange = (e) => {
-    setProfileImg(e.target.files[0]);
+  // Api request handler
+  const handleApiRequest = async (url, formData, resetForm) => {
+    setIsSubmitting(true);
+
+    try {
+      if (!token)
+        throw new Error("User is not authenticated. Please login again.");
+
+      const response = await http.post(url, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success(response.data.message || "operation successful!");
+      if (resetForm) resetForm();
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // const handlePasswordChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setProfileForm((prevData) => ({ ...prevData, [name]: value }));
-  // };
-
-  // Profile Image upload
+  // profile form submission
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
 
-    if (Object.keys(errors).length > 0) {
-      toast.error("Please fix validation errors before submitting.");
-      return;
-    }
+    const isValid = validateFields(profileForm, {
+      name: { required: true },
+      phone: {
+        regex: /^\+92\s3\d{2}-\d{7}$/,
+        message: "Invalid phone format (e.g., +92 312 4567891).",
+      },
+    });
 
-    setIsSubmitting(true);
+    if (!isValid) return;
 
-    try {
-      const form = new FormData();
+    const formData = new FormData();
 
-      form.append("name", profileForm.name);
-      form.append("phone", profileForm.phone);
-
-      // if image file exist then append
-      if (profileForm.profile_image) {
-        form.append("profile_image", profileImg);
-      }
-
-      const token =
-        localStorage.getItem("access_token") ||
-        sessionStorage.getItem("access_token");
-
-      if (!token) {
-        toast.error("User is not authenticated. Please login again.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      const response = await http.post("profile/update", form, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(`response: ${response.data}`);
-
-      toast.success("Profile updated successfully!");
-    } catch (error) {
-      console.log(
-        `error: ${error.response ? error.response.data : error.message}`
-      );
-      toast.error("Error occured in profile updation!");
-    } finally {
-      setIsSubmitting(false);
-    }
+    Object.entries(profileForm).forEach(([key, value]) =>
+      formData.append(key, value)
+    );
+    handleApiRequest("profile/update", formData, () =>
+      setProfileForm({ name: "", phone: "", profile_image: null })
+    );
   };
 
-  // user links save and update
+  // links form submission
   const handleUserLinks = async (e) => {
     e.preventDefault();
 
-    const formErrors = Object.keys(linksForm).reduce((acc, field) => {
-      if (linksForm[field] && !urlRegex.test(linksForm[field])) {
-        acc[field] =
-          "Please enter a valide URL (e.g. https://www.example.com).";
-      }
-      return acc;
-    }, {});
+    const isValid = validateFields(linksForm, {
+      website: { regex: urlRegex, message: "Invalid URL format." },
+      facebook: { regex: urlRegex, message: "Invalid URL format." },
+      instagram: { regex: urlRegex, message: "Invalid URL format." },
+      twitter: { regex: urlRegex, message: "Invalid URL format." },
+    });
 
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
+    if (!isValid) return;
+
+    handleApiRequest("user-links", linksForm, () =>
+      setLinksForm({ website: "", facebook: "", instagram: "", twitter: "" })
+    );
+  };
+
+  // Address form submission
+  const handleUserAddress = async (e) => {
+    e.preventDefault();
+
+    const isValid = validateFields(addressForm, {
+      city: { required: true },
+      zip_code: { required: true },
+      shipping_address: { required: true },
+      billing_address: { required: true },
+    });
+
+    if (!isValid) return;
+
+    handleApiRequest("user-address", addressForm, () =>
+      setAddressForm({
+        city: "",
+        zip_code: "",
+        shipping_address: "",
+        billing_address: "",
+      })
+    );
+  };
+
+  // Password form submission
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+
+    const isValid = validateFields(isPassword, {
+      current_password: {
+        required: true,
+        message: "The current password is incorrect.",
+      },
+      password: {
+        required: true,
+        message: "Password must be at least 8 characters long.",
+      },
+      password_confirmation: { required: true },
+    });
+
+    if (!isValid || isPassword.password !== isPassword.password_confirmation) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password_confirmation: "Password do not match.",
+      }));
       return;
     }
 
-    setIsSubmitting(true);
-
-    try {
-      const token =
-        localStorage.getItem("access_token") ||
-        sessionStorage.getItem("access_token");
-
-      if (!token) {
-        toast.error("User is not authenticated. Please login again.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      const response = await http.post("user-links", {
-        website: linksForm.website,
-        instagram: linksForm.instagram,
-        facebook: linksForm.facebook,
-        twitter: linksForm.twitter,
-      },{
-        headers:{Authorization:`Bearer ${token}`},
-      });
-
-      setLinksForm({
-        website: "",
-        instagram: "",
-        facebook: "",
-        twitter: "",
-      });
-
-      console.log(response.data.message);
-
-      toast.success(`${response.data.message}`);
-    } catch (error) {
-      toast.error(error.data.message);
-      console.log(error.data.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    handleApiRequest("update-password", isPassword, () =>
+      setIsPassword({
+        current_password: "",
+        password: "",
+        password_confirmation: "",
+      })
+    );
   };
-
-  // fetch user info
-  useEffect(() => {
-    const token =
-      localStorage.getItem("access_token") ||
-      sessionStorage.getItem("access_token");
-    if (token) {
-      http
-        .post(
-          "me",
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        )
-        .then((response) => {
-          console.log(response);
-          SetUserInfo(response.data);
-        })
-        .catch((error) => {
-          console.log(error, "error occured....");
-        });
-    } else {
-      console.log("no token found");
-    }
-  }, []);
 
   return (
     <>
@@ -271,10 +224,8 @@ const UserProfile = () => {
                         width="110"
                       />
                       <div className="my-3">
-                        <h4>{userInfo ? userInfo.name : "Loading..."}</h4>
-                        <p className="text-secondary mb-1">
-                          {userInfo ? userInfo.role : "Loading..."}
-                        </p>
+                        <h4>user name</h4>
+                        <p className="text-secondary mb-1">status</p>
                         <p className="text-muted font-size-sm">location</p>
                       </div>
                     </div>
@@ -407,8 +358,18 @@ const UserProfile = () => {
                               <input
                                 type="file"
                                 className="form-control"
-                                onChange={handleImageChange}
+                                onChange={(e) =>
+                                  setProfileForm({
+                                    ...profileForm,
+                                    profile_image: e.target.files[0],
+                                  })
+                                }
                               />
+                              {errors.profile_image && (
+                                <small className="text-danger">
+                                  {errors.profile_image}
+                                </small>
+                              )}
                             </div>
                           </div>
                           <div className="row mb-3">
@@ -422,8 +383,15 @@ const UserProfile = () => {
                                 className={`form-control ${
                                   errors.name ? "is-invalid" : ""
                                 }`}
+                                placeholder="Enter your username"
                                 value={profileForm.name}
-                                onChange={handleInputChange}
+                                onChange={(e) =>
+                                  setProfileForm({
+                                    ...profileForm,
+                                    name: e.target.value,
+                                  })
+                                }
+                                required
                               />
                               {errors.name && (
                                 <small className="text-danger">
@@ -440,8 +408,9 @@ const UserProfile = () => {
                               <input
                                 type="email"
                                 className="form-control"
-                                value={userInfo ? userInfo.email : "Loading..."}
-                                disabled
+                                placeholder="Enter your email"
+                                // value={userInfo ? userInfo.email : "Loading..."}
+                                // disabled
                               />
                             </div>
                           </div>
@@ -457,7 +426,12 @@ const UserProfile = () => {
                                   errors.phone ? "is-invalid" : ""
                                 }`}
                                 value={profileForm.phone}
-                                onChange={handleInputChange}
+                                onChange={(e) =>
+                                  setProfileForm({
+                                    ...profileForm,
+                                    phone: e.target.value,
+                                  })
+                                }
                                 placeholder="+92 3xx-xxxxxxx"
                               />
                               {errors.phone && (
@@ -491,36 +465,106 @@ const UserProfile = () => {
                         id="primaryprofile"
                       >
                         <form onSubmit={handleUserLinks}>
-                          {["website", "twitter", "instagram", "facebook"].map(
-                            (field) => (
-                              <div className="row mb-3" key={field}>
-                                <div className="col-sm-3">
-                                  <h6 className="mb-0">
-                                    {field.charAt(0).toUpperCase() +
-                                      field.slice(1)}
-                                  </h6>
-                                </div>
-                                <div className="col-sm-9 text-secondary">
-                                  <input
-                                    type="text"
-                                    className={`form-control ${
-                                      errors[field] ? "is-invalid" : ""
-                                    }`}
-                                    placeholder={`https://www.${field}.com/`}
-                                    name={field}
-                                    value={linksForm[field]}
-                                    onChange={handleInputChange}
-                                    required
-                                  />
-                                  {errors[field] && (
-                                    <small className="invalid-feedback">
-                                      {errors[field]}
-                                    </small>
-                                  )}
-                                </div>
-                              </div>
-                            )
-                          )}
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Website</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="url"
+                                name="website"
+                                className="form-control"
+                                placeholder="https://www.example.com"
+                                value={linksForm.website}
+                                onChange={(e) =>
+                                  setLinksForm({
+                                    ...linksForm,
+                                    website: e.target.value,
+                                  })
+                                }
+                              />
+                              {errors.website && (
+                                <small className="text-danger">
+                                  {errors.website}
+                                </small>
+                              )}
+                            </div>
+                          </div>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Facebook</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="url"
+                                name="facebook"
+                                className="form-control"
+                                placeholder="https://www.facebook.com/your-username"
+                                value={linksForm.facebook}
+                                onChange={(e) =>
+                                  setLinksForm({
+                                    ...linksForm,
+                                    facebook: e.target.value,
+                                  })
+                                }
+                              />
+                              {errors.facebook && (
+                                <small className="text-danger">
+                                  {errors.facebook}
+                                </small>
+                              )}
+                            </div>
+                          </div>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Instagram</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="url"
+                                name="instagram"
+                                className="form-control"
+                                placeholder="https://www.instagram.com/your-username"
+                                value={linksForm.instagram}
+                                onChange={(e) =>
+                                  setLinksForm({
+                                    ...linksForm,
+                                    instagram: e.target.value,
+                                  })
+                                }
+                              />
+                              {errors.instagram && (
+                                <small className="text-danger">
+                                  {errors.instagram}
+                                </small>
+                              )}
+                            </div>
+                          </div>
+                          <div className="row mb-3">
+                            <div className="col-sm-3">
+                              <h6 className="mb-0">Twitter</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="url"
+                                name="twitter"
+                                className="form-control"
+                                placeholder="https://www.twitter.com/your-username"
+                                value={linksForm.twitter}
+                                onChange={(e) =>
+                                  setLinksForm({
+                                    ...linksForm,
+                                    twitter: e.target.value,
+                                  })
+                                }
+                              />
+                              {errors.twitter && (
+                                <small className="text-danger">
+                                  {errors.twitter}
+                                </small>
+                              )}
+                            </div>
+                          </div>
                           <div className="row">
                             <div className="col-sm-3"></div>
                             <div className="col-sm-9 text-secondary">
@@ -542,7 +586,7 @@ const UserProfile = () => {
                         role="tabpanel"
                         id="primaryaddress"
                       >
-                        <form>
+                        <form onSubmit={handleUserAddress}>
                           <div className="row mb-3">
                             <div className="col-sm-3">
                               <h6 htmlFor="city">Country</h6>
@@ -553,7 +597,7 @@ const UserProfile = () => {
                                 name="country"
                                 className="form-control"
                                 placeholder="your country"
-                                value={"Pakistan"}
+                                value={addressForm.country}
                                 disabled
                               />
                             </div>
@@ -563,7 +607,18 @@ const UserProfile = () => {
                               <h6 htmlFor="city">City</h6>
                             </div>
                             <div className="col-sm-9 text-secondary">
-                              <select id="city" className="form-control">
+                              <select
+                                id="city"
+                                className="form-control"
+                                value={addressForm.city}
+                                onChange={(e) =>
+                                  setAddressForm({
+                                    ...addressForm,
+                                    city: e.target.value,
+                                  })
+                                }
+                                required
+                              >
                                 <option value="" disabled>
                                   Select your city
                                 </option>
@@ -573,6 +628,11 @@ const UserProfile = () => {
                                   </option>
                                 ))}
                               </select>
+                              {errors.city && (
+                                <small className="text-danger">
+                                  {errors.city}
+                                </small>
+                              )}
                             </div>
                           </div>
                           <div className="row mb-3">
@@ -585,10 +645,21 @@ const UserProfile = () => {
                                 name="zip_code"
                                 className="form-control"
                                 placeholder="23566"
+                                value={addressForm.zip_code}
+                                onChange={(e) =>
+                                  setAddressForm({
+                                    ...addressForm,
+                                    zip_code: e.target.value,
+                                  })
+                                }
                               />
+                              {errors.zip_code && (
+                                <small className="text-danger">
+                                  {errors.zip_code}
+                                </small>
+                              )}
                             </div>
                           </div>
-
                           <div className="row mb-3">
                             <div className="col-sm-3">
                               <h6 className="mb-0">Shipping Address</h6>
@@ -599,7 +670,19 @@ const UserProfile = () => {
                                 name="shipping_address"
                                 className="form-control"
                                 placeholder="Bay Area, San Francisco, CA"
+                                value={addressForm.shipping_address}
+                                onChange={(e) =>
+                                  setAddressForm({
+                                    ...addressForm,
+                                    shipping_address: e.target.value,
+                                  })
+                                }
                               />
+                              {errors.shipping_address && (
+                                <small className="text-danger">
+                                  {errors.shipping_address}
+                                </small>
+                              )}
                             </div>
                           </div>
                           <div className="row mb-3">
@@ -612,7 +695,19 @@ const UserProfile = () => {
                                 name="billing_address"
                                 className="form-control"
                                 placeholder="Bay Area, San Francisco, CA"
+                                value={addressForm.billing_address}
+                                onChange={(e) =>
+                                  setAddressForm({
+                                    ...addressForm,
+                                    billing_address: e.target.value,
+                                  })
+                                }
                               />
+                              {errors.billing_address && (
+                                <small className="text-danger">
+                                  {errors.billing_address}
+                                </small>
+                              )}
                             </div>
                           </div>
                           <div className="row">
@@ -624,7 +719,9 @@ const UserProfile = () => {
                                 id="custom-bg-btn"
                                 disabled={isSubmitting}
                               >
-                                {isSubmitting ? "Submitting..." : "Save Address"}
+                                {isSubmitting
+                                  ? "Submitting..."
+                                  : "Save Address"}
                               </button>
                             </div>
                           </div>
@@ -636,17 +733,31 @@ const UserProfile = () => {
                         role="tabpanel"
                         id="primarypassword"
                       >
-                        <form action="">
+                        <form onSubmit={handleUpdatePassword}>
                           <div className="row mb-3">
                             <div className="col-sm-3">
                               <h6 className="mb-0">Current Password</h6>
                             </div>
                             <div className="col-sm-9 text-secondary">
                               <input
-                                type="text"
+                                type="password"
+                                name="current_password"
                                 className="form-control"
-                                placeholder="https://www.facebook.com/"
+                                placeholder="Enter your current password"
+                                value={isPassword.current_password}
+                                onChange={(e) =>
+                                  setIsPassword({
+                                    ...isPassword,
+                                    current_password: e.target.value,
+                                  })
+                                }
+                                required
                               />
+                              {errors.current_password && (
+                                <small className="text-danger">
+                                  {errors.current_password}
+                                </small>
+                              )}
                             </div>
                           </div>
                           <div className="row mb-3">
@@ -655,10 +766,24 @@ const UserProfile = () => {
                             </div>
                             <div className="col-sm-9 text-secondary">
                               <input
-                                type="text"
+                                type="password"
+                                name="password"
                                 className="form-control"
-                                placeholder="https://www.facebook.com/"
+                                placeholder="Enter a new password"
+                                value={isPassword.password}
+                                onChange={(e) =>
+                                  setIsPassword({
+                                    ...isPassword,
+                                    password: e.target.value,
+                                  })
+                                }
+                                required
                               />
+                              {errors.password && (
+                                <small className="text-danger">
+                                  {errors.password}
+                                </small>
+                              )}
                             </div>
                           </div>
                           <div className="row mb-3">
@@ -667,21 +792,39 @@ const UserProfile = () => {
                             </div>
                             <div className="col-sm-9 text-secondary">
                               <input
-                                type="text"
+                                type="password"
+                                name="password_confirmation"
                                 className="form-control"
-                                placeholder="https://www.facebook.com/"
+                                placeholder="Confirm your password"
+                                value={isPassword.password_confirmation}
+                                onChange={(e) =>
+                                  setIsPassword({
+                                    ...isPassword,
+                                    password_confirmation: e.target.value,
+                                  })
+                                }
+                                required
                               />
+                              {errors.password_confirmation && (
+                                <small className="text-danger">
+                                  {errors.password_confirmation}
+                                </small>
+                              )}
                             </div>
                           </div>
                           <div className="row">
                             <div className="col-sm-3"></div>
                             <div className="col-sm-9 text-secondary">
-                              <input
-                                type="button"
+                              <button
+                                type="submit"
+                                className="btn text-white d-flex justify-content-center align-items-center gap-2"
                                 id="custom-bg-btn"
-                                className="btn text-white px-5"
-                                value="Change Password"
-                              />
+                                disabled={isSubmitting}
+                              >
+                                {isSubmitting
+                                  ? "Submitting..."
+                                  : "Change Password"}
+                              </button>
                             </div>
                           </div>
                         </form>
@@ -692,7 +835,6 @@ const UserProfile = () => {
               </div>
             </div>
           </div>
-          {userInfo && <Header userName={userInfo.name} />}
         </div>
       </div>
     </>

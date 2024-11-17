@@ -167,8 +167,8 @@ class AccountController extends Controller
             }
         } else {
             $insertAddress = DB::table('addresses')->where('user_id', $userId)->insert([
-                'user_id'=> $userId,
-                'country'=>$request->country,
+                'user_id' => $userId,
+                'country' => $request->country,
                 'city' => $request->city,
                 'zip_code' => $request->zip_code,
                 'shipping_address' => $request->shipping_address,
@@ -188,5 +188,37 @@ class AccountController extends Controller
                 ], 500);
             }
         }
+    }
+
+    public function passwordUpdate(Request $request)
+    {
+        $validate = Validator::make($request->all(), [
+            'current_password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validate->errors(),
+            ], 422);
+        }
+
+        $user = auth()->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The current password is incorrect.'
+            ], 400);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password updated successfully.'
+        ]);
     }
 }
