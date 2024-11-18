@@ -200,7 +200,7 @@ class AccountController extends Controller
         if ($validate->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validate->errors(),
+                'errors' => $validate->errors()->messages(),
             ], 422);
         }
 

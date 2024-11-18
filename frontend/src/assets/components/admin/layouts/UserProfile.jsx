@@ -125,6 +125,15 @@ const UserProfile = () => {
   const handleUserLinks = async (e) => {
     e.preventDefault();
 
+    const oneValue = Object.values(linksForm).some(
+      (value) => value.trim() !== ""
+    );
+
+    if (!oneValue) {
+      toast.error("At least one link must be filled.");
+      return;
+    }
+
     const isValid = validateFields(linksForm, {
       website: { regex: urlRegex, message: "Invalid URL format." },
       facebook: { regex: urlRegex, message: "Invalid URL format." },
