@@ -7,7 +7,7 @@ import logo from "../../../Images/Logo.png";
 import { NavLink } from "react-router-dom";
 
 
-const Header = () => {
+const Header = ({ userName }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showInput, setShowInput] = useState(false);
 
@@ -55,7 +55,7 @@ const Header = () => {
                 className="user-img me-2"
                 alt="user avatar"
               />
-              <span>User Name</span>
+              <span>{userName ? userName : "User Name"}</span>
             </Nav.Link>
             <div
               className={`dropdown-menu ${showDropdown ? "show" : ""}`}

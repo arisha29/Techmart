@@ -72,4 +72,9 @@ class User extends Authenticatable implements JWTSubject
     {
         $this->notify(new CustomPasswordResetNotification($token));
     }
+
+    public function address()
+    {
+        return $this->hasOne(Address::class);
+    }
 }
