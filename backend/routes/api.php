@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Frontend\AccountController;
+use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
@@ -17,6 +18,11 @@ Route::post('user-links', [AccountController::class, 'userLinks']);
 Route::post('user-address', [AccountController::class, 'storeAddress']);
 Route::post('update-password', [AccountController::class, 'passwordUpdate']);
 
+// Categories Routes
+Route::post('categories', [CategoryController::class, 'store']);
+Route::post('categories/{slug}', [CategoryController::class, 'update']);
+Route::get('categories', [CategoryController::class, 'show']);
+Route::delete('categories/{slug}', [CategoryController::class, 'destory']);
 
 // Protected Routes
 Route::middleware(['auth:api'])->group(function () {
