@@ -34,6 +34,8 @@ const UserProfile = () => {
   const token =
     localStorage.getItem("access_token") ||
     sessionStorage.getItem("access_token");
+  const [userInfo, setUserInfo] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [profileForm, setProfileForm] = useState({
@@ -76,6 +78,32 @@ const UserProfile = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  //handle image change
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // const allowedFileTypes = [
+      //   "image/jpeg",
+      //   "image/png",
+      //   "image/webp",
+      //   "image/jpg",
+      // ];
+      // const maxSize = 4096 * 1024;
+
+      // if (!allowedFileTypes.includes(file.type)) {
+      //   toast.error("Only jpg, jpeg, png, and webp formats are allowed.");
+      //   return;
+      // }
+
+      // if (file.size > maxSize) {
+      //   toast.error("Profile image must not exceed 4MB in size.");
+      //   return;
+      // }
+
+      setProfileForm((prevData) => ({ ...prevData, profile_image: file }));
+    }
+  };
+
   // Api request handler
   const handleApiRequest = async (url, formData, resetForm) => {
     setIsSubmitting(true);
@@ -100,25 +128,26 @@ const UserProfile = () => {
   // profile form submission
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-
-    const isValid = validateFields(profileForm, {
-      name: { required: true },
-      phone: {
-        regex: /^\+92\s3\d{2}-\d{7}$/,
-        message: "Invalid phone format (e.g., +92 312 4567891).",
-      },
-    });
-
-    if (!isValid) return;
+    setIsSubmitting(true);
 
     const formData = new FormData();
+    for (const key in profileForm) {
+      formData.append(key, profileForm[key]);
+    }
 
-    Object.entries(profileForm).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
-    handleApiRequest("profile/update", formData, () =>
-      setProfileForm({ name: "", phone: "", profile_image: null })
-    );
+    try {
+      const response = await http.post("profile/update", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      console.log("handleProfileUpdate: ", response.data);
+      toast.success(response.data.message);
+    } catch (error) {
+      console.log("errors of handleProfileUpdate: ", error);
+      toast.error(error.response?.data?.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // links form submission
@@ -204,6 +233,38 @@ const UserProfile = () => {
     );
   };
 
+  // fetch user-info from token
+  const fetchUser = async () => {
+    setLoading(true);
+
+    try {
+      const response = await http.get("me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response.data);
+
+      setUserInfo(response.data);
+    } catch (error) {
+      console.log(`userInfo: ${error}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchUser();
+    }
+  }, [token]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!userInfo) {
+    return <div>User not logged in or data unavailable</div>;
+  }
+
   return (
     <>
       <div className="wrapper">
@@ -233,9 +294,8 @@ const UserProfile = () => {
                         width="110"
                       />
                       <div className="my-3">
-                        <h4>user name</h4>
-                        <p className="text-secondary mb-1">status</p>
-                        <p className="text-muted font-size-sm">location</p>
+                        <h4>{userInfo.name}</h4>
+                        <p className="text-secondary mb-1">{userInfo.role}</p>
                       </div>
                     </div>
                     <hr className="my-0" />
@@ -360,19 +420,19 @@ const UserProfile = () => {
                         role="tabpanel"
                         id="primaryhome"
                       >
-                        <form onSubmit={handleProfileUpdate}>
+                        <form
+                          onSubmit={handleProfileUpdate}
+                          encType="multipart/formData"
+                        >
                           <div className="row mb-3">
                             <h6 className="col-sm-3">Profile Image</h6>
                             <div className="col-sm-9">
                               <input
                                 type="file"
+                                name="profile_image"
                                 className="form-control"
-                                onChange={(e) =>
-                                  setProfileForm({
-                                    ...profileForm,
-                                    profile_image: e.target.files[0],
-                                  })
-                                }
+                                onChange={handleImageChange}
+                                accept="image/jpeg, image/png, image/webp, image/jpg"
                               />
                               {errors.profile_image && (
                                 <small className="text-danger">
@@ -418,8 +478,8 @@ const UserProfile = () => {
                                 type="email"
                                 className="form-control"
                                 placeholder="Enter your email"
-                                // value={userInfo ? userInfo.email : "Loading..."}
-                                // disabled
+                                value={userInfo.email}
+                                disabled
                               />
                             </div>
                           </div>
@@ -441,7 +501,7 @@ const UserProfile = () => {
                                     phone: e.target.value,
                                   })
                                 }
-                                placeholder="+92 3xx-xxxxxxx"
+                                placeholder="+923211234567"
                               />
                               {errors.phone && (
                                 <small className="text-danger">

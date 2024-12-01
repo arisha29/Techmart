@@ -1,5 +1,4 @@
 import "./App.css";
-// import 'bootstrap/js/dist/tab';
 import "bootstrap/dist/js/bootstrap";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import WebHome from "./assets/components/frontend/WebHome";
@@ -13,6 +12,10 @@ import UserProfile from "./assets/components/admin/layouts/UserProfile";
 import Header from "./assets/components/admin/layouts/Header";
 import SideBar from "./assets/components/admin/layouts/SideBar";
 import NotFound from "./assets/components/frontend/NotFound";
+import AddProduct from "./assets/components/admin/layouts/Products/AddProduct";
+import AddCategory from "./assets/components/admin/layouts/Categories/AddCategory";
+import AllProducts from "./assets/components/admin/layouts/Products/AllProducts";
+import AllCategories from "./assets/components/admin/layouts/Categories/AllCategories";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -74,6 +77,46 @@ const App = () => {
         <>
           <Header />
           <UserProfile />
+          <SideBar />
+        </>
+      ),
+    },
+    {
+      path: "add-new-product",
+      element: (
+        <>
+          <Header />
+          <AddProduct />
+          <SideBar />
+        </>
+      ),
+    },
+    {
+      path: "add-new-category",
+      element: (
+        <>
+          <Header />
+          <AddCategory />
+          <SideBar />
+        </>
+      ),
+    },
+    {
+      path: "all-products",
+      element: (
+        <>
+          <Header />
+          <AllProducts />
+          <SideBar />
+        </>
+      ),
+    },
+    {
+      path: "all-categories",
+      element: (
+        <>
+          <Header />
+          <AllCategories />
           <SideBar />
         </>
       ),

@@ -19,7 +19,6 @@ class AccountController extends Controller
 
     public function Profileupdate(Request $request)
     {
-
         $user = User::findOrFail(auth()->user()->id);
 
         if (!$user) {
@@ -27,9 +26,18 @@ class AccountController extends Controller
         }
 
         $validate = $request->validate([
-            'name' => 'required|string|max:100',
-            'phone' => 'nullable|string|max:255',
-            'profile_image' => 'nullable|max:4096',
+            'name' => 'required|string|min:3|max:100',
+            'phone' => 'nullable|regex:/^\+?[0-9]{10,15}$/',
+            // 'profile_image' => 'nullable|mimes:jpg,jpeg,png,webp|max:4096',
+            'profile_image' => 'nullable|max:4096|mimes:jpg,jpeg,png,webp|file',
+        ], [
+            'name.required' => 'The name field is required.',
+            'name.string' => 'Please provide a valid name.',
+            'name.min' => 'Name must be atleast 3 characters.',
+            'name.max' => 'The provided name is too long. Maximum length is 100 characters.',
+            'phone.regex' => 'Please provide a valid mobile number (10-15 digits).',
+            // 'profile_image.max' => 'Profile image must not exceed 4MB in size.',
+            // 'profile_image.mimes' => 'Only jpg, jpeg, png, and webp file formats are allowed for profile images.'
         ]);
 
         if (!$validate) {
@@ -54,6 +62,15 @@ class AccountController extends Controller
             }
         }
 
+        // if ($request->hasFile('profile_image')) {
+        //     $file = $request->file('profile_image');
+        //     $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+        //     $filePath = $file->storeAs('assets/media/images/users', $fileName, 'public');
+
+        //     $selected_image = 'storage/' . $filePath;
+        //     $user->profile_image = $selected_image;
+        // }
+
         $user->save();
 
         return response()->json(['message' => 'Profile updated successfully.']);
@@ -62,10 +79,16 @@ class AccountController extends Controller
     public function userLinks(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'website' => 'nullable|url',
+            'website' => 'nullable|url|regex:/^(https?:\/\/(?:www\.)?[a-zA-Z0-9./-]+)$/',
             'instagram' => 'nullable|url',
             'facebook' => 'nullable|url',
             'twitter' => 'nullable|url',
+        ], [
+            'website.url' => 'Please provide a valid website URL (e.g., https://www.example.com).',
+            'website.regex' => 'The website URL format is invalid. Ensure it starts with http:// or https://.',
+            'instagram.url' => 'Please provide a valid Instagram profile URL.',
+            'facebook.url' => 'Please provide a valid Facebook profile URL.',
+            'twitter.url' => 'Please provide a valid Twitter profile URL.',
         ]);
 
         if ($validate->fails()) {
@@ -126,11 +149,17 @@ class AccountController extends Controller
     public function storeAddress(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'country' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'zip_code' => 'nullable|string|max:255',
-            'shipping_address' => 'nullable|string|max:255',
-            'billing_address' => 'nullable|string|max:255',
+            'country' => 'required|string',
+            'city' => 'required|string',
+            'zip_code' => 'nullable|digits:5',
+            'shipping_address' => 'required|string|max:255',
+            'billing_address' => 'required|string|max:255',
+        ], [
+            'country.required' => 'The country field is required.',
+            'city.required' => 'The city field is required.',
+            'zip_code.digits' => 'The zip code must be exactly 5 digits.',
+            'billing_address.required' => 'The billing address is required.',
+            'shipping_address.required' => 'The shipping address is required.',
         ]);
 
         if ($validate->fails()) {
@@ -195,6 +224,12 @@ class AccountController extends Controller
         $validate = Validator::make($request->all(), [
             'current_password' => 'required|string|min:8',
             'password' => 'required|string|min:8|confirmed',
+        ], [
+            'current_password.required' => 'The current password is required.',
+            'current_password.min' => 'The current password must be at least 8 characters.',
+            'password.required' => 'The new password is required.',
+            'password.min' => 'The new password must be at least 8 characters.',
+            'password.confirmed' => 'The password confirmation does not match.',
         ]);
 
         if ($validate->fails()) {

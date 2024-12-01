@@ -1,19 +1,32 @@
 import { useState } from "react";
+import "./admin.css";
 import { Image } from "react-bootstrap";
 import logo from "../../../Images/Logo.png";
 import { MdOutlineDashboard } from "react-icons/md";
 import { IoChevronBack } from "react-icons/io5";
 import { CiCircleList } from "react-icons/ci";
 import { HiMiniGiftTop } from "react-icons/hi2";
-import { MdOutlineAddCircle } from "react-icons/md";
+import { MdOutlineAddCircle, MdCategory } from "react-icons/md";
+import { FaBagShopping } from "react-icons/fa6";
+import { NavLink } from "react-router-dom";
 
 const SideBar = () => {
   const [isSidebarShow, setIsSidebarShow] = useState(true);
+  const [productsDropdown, setproductsDropdown] = useState(false);
+  const [categoryDropdown, setcategoryDropdown] = useState(false);
 
   // toggle for sidebar
   const toggleSidebar = () => {
     setIsSidebarShow(!isSidebarShow);
   };
+
+  const toggleProductsDropdown=()=>{
+    setproductsDropdown((prevState)=>!prevState);
+  };
+
+   const toggleCategoryDropdown = () => {
+     setcategoryDropdown((prevState) => !prevState);
+   };
 
   return (
     <>
@@ -49,33 +62,66 @@ const SideBar = () => {
             <hr />
             <li>
               <a
-                href="ecommerce-products.html"
-                className="d-flex align-items-center gap-2"
-              >
-                <CiCircleList color="#29456B" fontSize={25} />
-                <span>Products</span>
-              </a>
-            </li>
-            <hr />
-
-            <li>
-              <a
-                href="ecommerce-add-new-products.html"
-                className="d-flex align-items-center gap-2"
-              >
-                <MdOutlineAddCircle color="#29456B" fontSize={25} />
-                <span>Add New Products</span>
-              </a>
-            </li>
-            <hr />
-            <li>
-              <a
                 href="ecommerce-orders.html"
                 className="d-flex align-items-center gap-2"
               >
                 <HiMiniGiftTop color="#29456B" fontSize={25} />
                 <span>Orders</span>
               </a>
+            </li>
+            <hr />
+            <li>
+              <a
+                href="#"
+                className={`has-arrow ${productsDropdown ? "open" : ""}`}
+                onClick={toggleProductsDropdown}
+              >
+                <FaBagShopping color="#29456B" fontSize={20} />
+                <div className="menu-title">Products</div>
+              </a>
+              {productsDropdown && (
+                <ul>
+                  <li>
+                    <NavLink to="/all-products" className="gap-2">
+                      <CiCircleList color="#29456B" fontSize={20} />
+                      <span>All Products</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/add-new-product" className="gap-2">
+                      <MdOutlineAddCircle color="#29456B" fontSize={20} />
+                      <span>Add New Product</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
+            </li>
+            <hr />
+            <li>
+              <a
+                href="#"
+                className={`has-arrow ${categoryDropdown ? "open" : ""}`}
+                onClick={toggleCategoryDropdown}
+              >
+                <MdCategory color="#29456B" fontSize={20} />
+                <div className="menu-title">Categories</div>
+              </a>
+              {categoryDropdown && (
+                <ul>
+                  <li>
+                    <NavLink to="/all-categories" className="gap-2">
+                      <CiCircleList color="#29456B" fontSize={20} />
+                      <span>All Categories</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/add-new-category" className="gap-2">
+                      <MdOutlineAddCircle color="#29456B" fontSize={20} />
+                      <span>Add New Category</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
           </ul>
         </div>
