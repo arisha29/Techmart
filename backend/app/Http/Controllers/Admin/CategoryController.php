@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Str;
 
 class CategoryController extends Controller
 {
@@ -15,15 +16,18 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+        ]);
+
+        if (Category::where('name', $request->name)->exists()) {
+            return response()->json(['message' => 'Category already exists.'], 400);
+        }
+
         $category = new Category();
 
         $category->name = $request->name;
-        if ($request->has('slug') && !empty($request->slug)) {
-            $category->slug = $request->slug;
-        } else {
-            $category->slug = str_replace('', '-', strtolower($request->name));
-        }
-
+        $category->slug = Str::slug($request->name);
         $category->save();
 
         return response()->json(['message' => 'category created successfully'], 200);
@@ -53,11 +57,16 @@ class CategoryController extends Controller
             return response()->json(['message' => 'category not found.'], 404);
         }
 
-        $category->name = $request->name;
-        $category->slug = $request->has('slug') && !empty($request->slug)
-            ? $request->slug
-            : str_replace(' ', '-', strtolower($request->name));
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
+        if (Category::where('name', $request->name)->exists()) {
+            return response()->json(['message' => 'Category already exists.'], 400);
+        }
+
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
         $category->save();
 
         return response()->json(['message' => 'category updated successfully.']);
